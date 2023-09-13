@@ -1,0 +1,27 @@
+{
+  "Launchers": [],
+  "SetupLaunchers": [
+    {
+      "ID": "IIS",
+      "Name": "IIS",
+      "LauncherHead": {
+        "ID": "StopWAS",
+        "Name": "Stop WAS",
+        "Type": "Cmd",
+        "Cmd": "Stop-Service",
+        "Arguments": "-Name WAS -Force",
+        "Run": true
+      },
+      "LauncherTail": {
+        "ID": "StartW3SVC",
+        "Name": "Start W3SVC",
+        "Type": "Cmd",
+        "Cmd": "Start-Service",
+        "Arguments": "-Name W3SVC",
+        "Run": true
+      },
+      "Run": true
+    }
+  ],
+  "Configuration": {}
+}
