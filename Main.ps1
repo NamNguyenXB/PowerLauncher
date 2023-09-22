@@ -1,56 +1,48 @@
-﻿$Verbose = 1
-$InstallFolder = Split-Path -Path ($MyInvocation.MyCommand.Path)
-$ModulesFolder = "$InstallFolder/Modules"
-
-# Import Modules
-Import-Module "$ModulesFolder/Invoke-Launcher"
-
-
-if ($Verbose = 1) {
-  Write-Begin
-  Write-Output "|  Root Folder: $InstallFolder"
+﻿$InstallFolder = $env:PowerLauncher_InstallDir
+if($null -eq $InstallFolder){
+  $InstallFolder = [Environment]::GetEnvironmentVariable('PowerLauncher_InstallDir', "User")
+}
+if($null -eq $InstallFolder){
+  $InstallFolder = [Environment]::GetEnvironmentVariable('PowerLauncher_InstallDir', "Machine")
+}
+IF ( $null -eq $InstallFolder) {
+  $InstallFolder = $PSScriptRoot
+}
+IF ( $null -eq $InstallFolder){
+  $InstallFolder = Split-Path -Path ($MyInvocation.MyCommand.Path)
 }
 
+# Import Modules
+Import-Module "$InstallFolder/Modules/PowerLogger"
+Import-Module "$InstallFolder/Modules/PowerLauncher"
+
+Write-Box -t "Begin"
+Write-Output "|  Root Folder: $InstallFolder"
 
 # Load Launch.json file
-$LaunchFile = "$InstallFolder/launch.json"
-$Launch = Get-Content $LaunchFile | ConvertFrom-Json
-
+$Launch = Get-Content "$InstallFolder/launch.json" | ConvertFrom-Json
 
 $SetupLaunchers = $Launch.SetupLaunchers
 $Launchers = $Launch.Launchers
 $Config = $Launch.Configuration
 
+# Add the InstallFolder to the $Config
 if (!$Config.InstallFolder) {
   $Config | Add-Member -NotePropertyName InstallFolder -NotePropertyValue $InstallFolder
 }
 
 Write-Output $Config
 
-$SetupLaunchers | ForEach-Object {
-  $SetupLauncher = $_
-  if ($SetupLauncher.Run) {
-    $Launcher = $SetupLauncher.LauncherHead
-    Invoke-Launcher $Launcher $Config
-  }
-}
+# Run LauncherHeads
+Invoke-SetupLaunchers -l $SetupLaunchers -c $Config -h $true
 
-$Launchers | ForEach-Object {
-  $Launcher = $_
-  Invoke-Launcher $Launcher $Config
-}
+# Run Launchers
+Invoke-Launcher -l $Launchers -c $Config
 
-$SetupLaunchers | ForEach-Object {
-  $SetupLauncher = $_
-  if ($SetupLauncher.Run) {
-    $Launcher = $SetupLauncher.LauncherTail
-    Invoke-Launcher $Launcher $Config
-  }
-}
+# Run LauncherTails
+Invoke-SetupLaunchers -l $SetupLaunchers -c $Config -h $false
 
-if ($Verbose = 1) {
-  Write-End
-}
+Write-Box -t "End  "
 
 
 if (!$Config.CloseWhenDone) {

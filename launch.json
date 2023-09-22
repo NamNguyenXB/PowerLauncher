@@ -20,7 +20,7 @@
         "Arguments": "-Name W3SVC",
         "Run": true
       },
-      "Run": true
+      "Run": false
     }
   ],
   "Configuration": {}
