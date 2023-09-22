@@ -1,17 +1,24 @@
-﻿#requires -RunAsAdministrator
+﻿<#
+.SYNOPSIS
+Install PowerLauncher
+
+.PARAMETER Scope
+Install Scope.
+
+.PARAMETER InstallDir
+Install Directory (Optional)
+
+.EXAMPLE
+
+#>
+
+#requires -RunAsAdministrator
 
 param (
-  <#
-    Install Scope
-  #>
   [Alias("s")]
   [ValidateSet("User", "Machine")]
   [Parameter(HelpMessage = "Specify the install scope. User or Machine.")]
   $Scope = "User",
-
-  <#
-    Install Directory (Optional)
-  #>
   [Alias("d", "dir")]
   [Parameter(HelpMessage = "Specify the install directory. Must be an valid folder path.")]
   [ValidateScript({ ($_ -eq $null) -or (Test-Path $_) })]
@@ -20,33 +27,27 @@ param (
 
 # Get Default InstallDir
 IF ( $null -eq $InstallDir) {
-  Write-Verbose "Using Default InstallDir ($PSScriptRoot)"
   $InstallDir = $PSScriptRoot
+  IF ( $null -eq $InstallDir) {
+    $InstallDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
+  }
+  Write-Verbose "Use Default InstallDir"
 }
-IF ( $null -eq $InstallDir){
-  $InstallDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
-}
 
-$ModuleDir = "$InstallDir\Modules"
-
-# TODO: Check existence of the Modules folder. Add new if not exists.
-
-Write-Verbose "Scope: $Scope"
-Write-Verbose "InstallDir: $InstallDir"
-Write-Verbose "ModuleDir: $ModuleDir"
-
+# Set environment variables
 [Environment]::SetEnvironmentVariable('PowerLauncher_InstallDir', $InstallDir, $Scope)
 Write-Verbose "Write $InstallDir to `$env:PowerLauncher_InstallDir"
 
+# Installl Modules
 $CurrentModulePaths = [Environment]::GetEnvironmentVariable('PSModulePath', $Scope) -split ';'
-Write-Verbose "PSModulePath: $CurrentModulePaths"
-
 $ModuleTargetPath = $CurrentModulePaths[0]
-Copy-Item "$ModuleDir\PowerLogger" -Destination "$ModuleTargetPath\PowerLogger" -Recurse
-Write-Verbose "Copy module PowerLogger to $ModuleTargetPath"
-Copy-Item "$ModuleDir\PowerLauncher" -Destination "$ModuleTargetPath\PowerLauncher" -Recurse
-Write-Verbose "Copy module PowerLauncher to $ModuleTargetPath"
-
+IF ($null -ne $ModuleTargetPath) {
+  $ModuleDir = "$InstallDir\Modules"
+  Copy-Item "$ModuleDir\PowerLogger" -Destination "$ModuleTargetPath\PowerLogger" -Recurse
+  Write-Verbose "Copy module PowerLogger to $ModuleTargetPath"
+  Copy-Item "$ModuleDir\PowerLauncher" -Destination "$ModuleTargetPath\PowerLauncher" -Recurse
+  Write-Verbose "Copy module PowerLauncher to $ModuleTargetPath"
+}
 
 # $MainFilePath = "$InstallDir\Main.ps1"
 # $ShortcutFilePath = "$InstallDir\Run.lnk"
