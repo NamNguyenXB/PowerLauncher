@@ -18,8 +18,10 @@ function Invoke-Launchers {
     [Alias("c")]
     $Config
   )
-  $Launchers | ForEach-Object {
-    $Launcher = $_
-    Invoke-Launcher $Launcher $Config
+  IF (($null -ne $Launchers) -and ($Launchers.Length -lt 0)) {
+    $Launchers | ForEach-Object {
+      $Launcher = $_
+      Invoke-Launcher $Launcher $Config
+    }
   }
 }

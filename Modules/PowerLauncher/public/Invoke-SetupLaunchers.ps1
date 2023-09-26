@@ -20,15 +20,18 @@ function Invoke-SetupLaunchers {
     [Alias("h")]
     [bool] $Head = $true
   )
-  $SetupLaunchers | ForEach-Object {
-    $SetupLauncher = $_
-    if ($SetupLauncher.Run) {
-      IF( $true -eq $Head){
-        $Launcher = $SetupLauncher.LauncherHead
-      } ELSE {
-        $Launcher = $SetupLauncher.LauncherTail
+  IF (($null -ne $SetupLaunchers) -and ($SetupLaunchers.Length -lt 0)) {
+    $SetupLaunchers | ForEach-Object {
+      $SetupLauncher = $_
+      if ($SetupLauncher.Run) {
+        IF ( $true -eq $Head) {
+          $Launcher = $SetupLauncher.LauncherHead
+        }
+        ELSE {
+          $Launcher = $SetupLauncher.LauncherTail
+        }
+        Invoke-Launcher $Launcher $Config
       }
-      Invoke-Launcher $Launcher $Config
     }
   }
 }
