@@ -12,12 +12,12 @@ Install Directory (Optional)
 
 #>
 
-#requires -RunAsAdministrator
-
 param (
   [Alias("s")]
+  [ValidateScript({ ($_ -eq $null) -or (Test-Path $_) })]
   $SourceDirectory,
   [Alias("d")]
+  [ValidateScript({ ($_ -eq $null) -or (Test-Path $_) })]
   $DestinationDirectory,
   [Alias("f")]
   $FileName = "Main.ps1",
@@ -25,48 +25,45 @@ param (
   $ShortcutName = "Run.lnk"
 )
 
-# Validation
+# Initialize variables
 $IsValid = $true
 $lineLength = 120
 $blankLine = " " * $lineLength
-$dashLine = "-" * $lineLength
-$shortDashLine = "-" * ($lineLength / 2)
 
+$ThisScriptDir = $PSScriptRoot
+IF ( $null -eq $ThisScriptDir) {
+  $ThisScriptDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
+}
 
-#Write-Output "$dashLine"
+# Validation
 
 # Validate $SourceDirectory
 # $SourceDirectory is required.
 # Defaults to the directory in which this script locates.
 $origpos = $host.UI.RawUI.CursorPosition
-Write-Output "[CHK] Validating SourceDirectory..."
+Write-Output "[ ] Check SourceDirectory"
 IF ($null -eq $SourceDirectory) {
-  $ThisScriptDir = $PSScriptRoot
-  IF ( $null -eq $ThisScriptDir) {
-    $ThisScriptDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
-  }
   $SourceDirectory = $ThisScriptDir
-}
-
-IF ($null -eq $SourceDirectory) {
-  $IsValid = $false
-  throw "Validation Failed. `$SourceDirectory was not found. If you are remotely installing, Please specify -SourceDirectory parameter."
+  IF ($null -eq $SourceDirectory) {
+    $IsValid = $false
+    throw "Validation Failed. `$SourceDirectory was not found. If you are remotely installing, Please specify -SourceDirectory parameter."
+  }
 }
 $host.UI.RawUI.CursorPosition = $origpos
 Write-Output $blankLine
 $host.UI.RawUI.CursorPosition = $origpos
-Write-Output "[CHK] SourceDirectory - Valid"
+Write-Output "[x] Check SourceDirectory"
 
 # Validate $DestinationDirectory
 $origpos = $host.UI.RawUI.CursorPosition
-Write-Output "[CHK] Validating DestinationDirectory..."
+Write-Output "[ ] Check DestinationDirectory"
 IF ( $null -eq $DestinationDirectory) {
   $DestinationDirectory = $SourceDirectory
 }
 $host.UI.RawUI.CursorPosition = $origpos
 Write-Output $blankLine
 $host.UI.RawUI.CursorPosition = $origpos
-Write-Output "[CHK] DestinationDirectory - Valid"
+Write-Output "[x] Check DestinationDirectory"
 
 
 IF ( -not $IsValid) {
@@ -77,10 +74,11 @@ Write-Output "[CHK] Validation completed. No error found."
 #Write-Output $dashLine
 
 $origpos = $host.UI.RawUI.CursorPosition
-Write-Output "[INF] Creating the shortcut $ShortcutFilePath for $MainFilePath..."
+
 
 $MainFilePath = "$SourceDirectory\$FileName"
 $ShortcutFilePath = "$DestinationDirectory\$ShortcutName"
+Write-Output "[INF] Creating the shortcut $ShortcutFilePath for $MainFilePath..."
  
 $WshShell = New-Object -comObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut($ShortcutFilePath)
@@ -99,7 +97,7 @@ Write-Output "[INF] Modifying the shortcut ($ShortcutFilePath)..."
 $bytes = [System.IO.File]::ReadAllBytes("$ShortcutFilePath")
 $bytes[0x15] = $bytes[0x15] -bor 0x20 #set byte 21 (0x15) bit 6 (0x20) ON
 [System.IO.File]::WriteAllBytes("$ShortcutFilePath", $bytes)
- 
+  
 $host.UI.RawUI.CursorPosition = $origpos
 Write-Output $blankLine
 $host.UI.RawUI.CursorPosition = $origpos
