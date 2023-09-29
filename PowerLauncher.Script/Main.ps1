@@ -5,10 +5,15 @@ Import-Module "PowerLogger"
 Import-Module "PowerLauncher"
 
 Write-Box -t "Begin"
-Write-Output "|  Root Folder: $InstallFolder"
+Write-Content "|  Root Folder: $InstallFolder"
+
+$ThisScriptDir = $PSScriptRoot
+IF ( $null -eq $ThisScriptDir) {
+  $ThisScriptDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
+}
 
 # Load Launch.json file
-$Launch = Get-Content "$InstallFolder/launch.json" | ConvertFrom-Json
+$Launch = Get-Content "$ThisScriptDir/launch.json" | ConvertFrom-Json
 
 $SetupLaunchers = $Launch.SetupLaunchers
 $Launchers = $Launch.Launchers
