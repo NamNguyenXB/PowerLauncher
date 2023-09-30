@@ -12,7 +12,6 @@ function Write-LauncherHead {
   param (
     [Alias("l")]
     [Parameter(HelpMessage = "Launcher to display.")]
-    [ValidateNotNull]
     $Launcher
   )
 

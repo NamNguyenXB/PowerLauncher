@@ -12,7 +12,6 @@ function Write-LauncherTail {
   param (
     [Alias("l")]
     [Parameter(HelpMessage = "Launcher to display.")]
-    [ValidateNotNull]
     $Launcher
   )
   Write-Line

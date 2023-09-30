@@ -23,5 +23,7 @@
       "Run": false
     }
   ],
-  "Configuration": {}
+  "Configuration": {
+    "CloseWhenDone": false
+  }
 }

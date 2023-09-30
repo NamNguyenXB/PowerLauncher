@@ -20,7 +20,7 @@ function Invoke-SetupLaunchers {
     [Alias("h")]
     [bool] $Head = $true
   )
-  IF (($null -ne $SetupLaunchers) -and ($SetupLaunchers.Length -lt 0)) {
+  IF (($null -ne $SetupLaunchers) -and ($SetupLaunchers.Length -gt 0)) {
     $SetupLaunchers | ForEach-Object {
       $SetupLauncher = $_
       if ($SetupLauncher.Run) {

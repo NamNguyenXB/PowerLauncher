@@ -1,12 +1,13 @@
 ﻿<#
 .SYNOPSIS
-Install PowerLauncher
+Create a shortcut that can run a Powershell script in the administrator mode.
 
-.PARAMETER Scope
-Install Scope.
+.PARAMETER SourceFilePath
 
-.PARAMETER InstallDir
-Install Directory (Optional)
+.PARAMETER DestinationDirectory
+
+.PARAMETER ShortcutName
+
 
 .EXAMPLE
 
@@ -15,12 +16,10 @@ Install Directory (Optional)
 param (
   [Alias("s")]
   [ValidateScript({ ($_ -eq $null) -or (Test-Path $_) })]
-  $SourceDirectory,
+  $SourceFilePath,
   [Alias("d")]
   [ValidateScript({ ($_ -eq $null) -or (Test-Path $_) })]
   $DestinationDirectory,
-  [Alias("f")]
-  $FileName = "Main.ps1",
   [Alias("n")]
   $ShortcutName = "Run.lnk"
 )
@@ -30,78 +29,86 @@ $IsValid = $true
 $lineLength = 120
 $blankLine = " " * $lineLength
 
+# Get folder of this script.
 $ThisScriptDir = $PSScriptRoot
 IF ( $null -eq $ThisScriptDir) {
   $ThisScriptDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
 }
 
+# Get default SourceFilePath
+IF ($null -eq $SourceFilePath) {
+  $SourceFilePath = "$ThisScriptDir\Main.ps1"
+}
+
+# Get default Destination Directory
+IF ( $null -eq $DestinationDirectory) {
+  $DestinationDirectory = Split-Path -Parent $SourceFilePath
+}
+
+# Get destination file path
+$ShortcutPath = "$DestinationDirectory\$ShortcutName"
+
 # Validation
 
-# Validate $SourceDirectory
-# $SourceDirectory is required.
+# Validate $SourceFilePath
+# $SourceFilePath is required.
 # Defaults to the directory in which this script locates.
-$origpos = $host.UI.RawUI.CursorPosition
-Write-Output "[ ] Check SourceDirectory"
-IF ($null -eq $SourceDirectory) {
-  $SourceDirectory = $ThisScriptDir
-  IF ($null -eq $SourceDirectory) {
-    $IsValid = $false
-    throw "Validation Failed. `$SourceDirectory was not found. If you are remotely installing, Please specify -SourceDirectory parameter."
-  }
+$pos = $host.UI.RawUI.CursorPosition
+Write-Verbose "[ ] Check SourceFilePath"
+IF (($null -eq $SourceFilePath) -or (-not (Test-Path $SourceFilePath))) {
+  $IsValid = $false
+  throw "Invalid. `$SourceFilePath ($SourceFilePath) is null or not a valid file path."
 }
-$host.UI.RawUI.CursorPosition = $origpos
-Write-Output $blankLine
-$host.UI.RawUI.CursorPosition = $origpos
-Write-Output "[x] Check SourceDirectory"
+$host.UI.RawUI.CursorPosition = $pos
+Write-Verbose $blankLine
+$host.UI.RawUI.CursorPosition = $pos
+Write-Verbose "[x] Check SourceFilePath"
+Write-Verbose "    - SourceFilePath: $SourceFilePath"
+
 
 # Validate $DestinationDirectory
-$origpos = $host.UI.RawUI.CursorPosition
-Write-Output "[ ] Check DestinationDirectory"
-IF ( $null -eq $DestinationDirectory) {
-  $DestinationDirectory = $SourceDirectory
+$pos = $host.UI.RawUI.CursorPosition
+Write-Verbose "[ ] Check ShortcutName"
+IF (($null -eq $ShortcutName) -or ("" -eq $ShortcutName)) {
+  $IsValid = $false
+  throw "Invalid. `$ShortcutName ($ShortcutName) is null or not empty."
 }
-$host.UI.RawUI.CursorPosition = $origpos
-Write-Output $blankLine
-$host.UI.RawUI.CursorPosition = $origpos
-Write-Output "[x] Check DestinationDirectory"
+$host.UI.RawUI.CursorPosition = $pos
+Write-Verbose $blankLine
+$host.UI.RawUI.CursorPosition = $pos
+Write-Verbose "[x] Check ShortcutName"
 
-
+# Thow exception if vailading failed.
 IF ( -not $IsValid) {
   throw 'Validation Failed.'
 }
 
-Write-Output "[CHK] Validation completed. No error found."
-#Write-Output $dashLine
+# Inform the validation result
+Write-Verbose "Validation completed. No error found."
 
-$origpos = $host.UI.RawUI.CursorPosition
-
-
-$MainFilePath = "$SourceDirectory\$FileName"
-$ShortcutFilePath = "$DestinationDirectory\$ShortcutName"
-Write-Output "[INF] Creating the shortcut $ShortcutFilePath for $MainFilePath..."
- 
+# Create a new shortcut file
+$pos = $host.UI.RawUI.CursorPosition
+Write-Verbose "Creating the shortcut..."
 $WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut($ShortcutFilePath)
+$Shortcut = $WshShell.CreateShortcut($ShortcutPath)
 $Shortcut.TargetPath = "powershell.exe"
-$Shortcut.Arguments = "-command ""& '$MainFilePath'"""
+$Shortcut.Arguments = "-command ""& '$SourceFilePath'"""
 $Shortcut.Save()
-
-$host.UI.RawUI.CursorPosition = $origpos
-Write-Output $blankLine
-$host.UI.RawUI.CursorPosition = $origpos
-Write-Output "[INF] Created shortcut $ShortcutFilePath for $MainFilePath"
+$host.UI.RawUI.CursorPosition = $pos
+Write-Verbose $blankLine
+$host.UI.RawUI.CursorPosition = $pos
+Write-Verbose "Created a new shortcut: $ShortcutPath"
  
-
-$origpos = $host.UI.RawUI.CursorPosition
-Write-Output "[INF] Modifying the shortcut ($ShortcutFilePath)..."
-$bytes = [System.IO.File]::ReadAllBytes("$ShortcutFilePath")
+# Modify the shortcut's access privilege
+$pos = $host.UI.RawUI.CursorPosition
+Write-Verbose "Modifying the shortcut..."
+$bytes = [System.IO.File]::ReadAllBytes("$ShortcutPath")
 $bytes[0x15] = $bytes[0x15] -bor 0x20 #set byte 21 (0x15) bit 6 (0x20) ON
-[System.IO.File]::WriteAllBytes("$ShortcutFilePath", $bytes)
-  
-$host.UI.RawUI.CursorPosition = $origpos
-Write-Output $blankLine
-$host.UI.RawUI.CursorPosition = $origpos
-Write-Output "[INF] Allow the shortcut ($ShortcutFilePath) run as Administrator"
-Write-Output "[INF] Done! The shortcut was created successfully."
+[System.IO.File]::WriteAllBytes("$ShortcutPath", $bytes)
+$host.UI.RawUI.CursorPosition = $pos
+Write-Verbose $blankLine
+$host.UI.RawUI.CursorPosition = $pos
+Write-Verbose "Modified the shortcut ($ShortcutPath)"
 
-#Write-Output $dashLine
+# Completed! Write log
+Write-Verbose "Done! The shortcut was created successfully."

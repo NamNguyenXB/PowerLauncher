@@ -31,123 +31,128 @@ param (
   [switch]$Force
 )
 
-$Verbose = [bool]$PSBoundParameters['Verbose']
+$lineLength = 120
+$blankLine = " " * $lineLength
 
-# Get Default InstallDir
-$CopyScripts = 1
+# Get this script directory.
+$ThisScriptDir = $PSScriptRoot
+IF ( $null -eq $ThisScriptDir) {
+  $ThisScriptDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
+}
 
-# Validation
-Write-Output "Validating ..."
-$IsValid = $true
+# Get $SourceDirectory
+IF ($null -eq $SourceDirectory) {
+  $SourceDirectory = "$ThisScriptDir\..\"
+}
 
 # Validate $SourceDirectory
+$pos = $host.UI.RawUI.CursorPosition
+Write-Verbose "[ ] Check SourceDirectory"
 IF ($null -eq $SourceDirectory) {
-  $ThisScriptDir = $PSScriptRoot
-  IF ( $null -eq $ThisScriptDir) {
-    $ThisScriptDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
-  }
-  $SourceDirectory = $ThisScriptDir
-}
-Write-Output "`$SourceDirectory=$SourceDirectory"
-IF ($null -eq $SourceDirectory) {
-  $IsValid = $false
   throw "Validation Failed. `$SourceDirectory was not found. If you are remotely installing, Please specify -SourceDirectory parameter."
 }
+$host.UI.RawUI.CursorPosition = $pos
+Write-Verbose $blankLine
+$host.UI.RawUI.CursorPosition = $pos
+Write-Verbose "[x] Check SourceDirectory"
+Write-Verbose "    - SourceDirectory: $SourceDirectory"
+
+# Get Modules folder
+$ModuleDir = "$SourceDirectory\Modules"
 
 # Validate $ModuleDir
-$ModuleDir = "$SourceDirectory\Modules"
-Write-Output "`$ModuleDir=$ModuleDir"
+$pos = $host.UI.RawUI.CursorPosition
+Write-Verbose "[ ] Check Modules"
 IF (-not (Test-Path $ModuleDir)) {
-  $IsValid = $false
   throw "`$ModuleDir($ModuleDir) is not a folder"
 }
-
 IF (-not(Test-Path "$ModuleDir\PowerLogger")) {
-  $IsValid = $false
   throw "Module PowerLogger was not found."
 }
-
 IF (-not(Test-Path "$ModuleDir\PowerLauncher")) {
-  $IsValid = $false
   throw "Module PowerLauncher was not found."
 }
+$host.UI.RawUI.CursorPosition = $pos
+Write-Verbose $blankLine
+$host.UI.RawUI.CursorPosition = $pos
+Write-Verbose "[x] Check Modules"
+Write-Verbose "    - ModuleDir: $ModuleDir"
+Write-Verbose "    - [x] PowerLogger"
+Write-Verbose "    - [x] PowerLauncher"
 
-IF ( $null -eq $InstallDirectory) {
-  $InstallDirectory = $SourceDirectory
-  $CopyScripts = 0
-}
-
-Write-Output "`$InstallDirectory=$InstallDirectory"
-
+# Get PSModulePath
 $CurrentModulePaths = $env:PSModulePath -split ';'
 IF ( $CurrentModulePaths.Length -lt 1) {
-  $IsValid = $false
   throw "`$env:PSModulePath is empty."
 }
 
+# Get ModuleTargetPath
 $ModuleTargetPath = $CurrentModulePaths[0]
-Write-Output "`$ModuleTargetPath=$ModuleTargetPath"
 IF (-not (Test-Path $ModuleTargetPath)) {
-  $IsValid = $false
   throw "`$ModuleTargetPath($ModuleTargetPath) is not a folder"
 }
 
-IF ( -not $IsValid) {
-  throw 'Validation Failed.'
-}
-
+# Waiting user input before installing
 IF ( -not $Force) {
-  Read-Host "Validations passed. Press Enter to continue."
+  Read-Host "Ready to Install! Press Enter to continue..."
 }
 else {
-  Write-Output "Validations passed."
+  Write-Verbose "Ready to Install!"
 }
 
-Write-Output "Start installing..."
+# Get $InstallDirectory
+IF ( $null -eq $InstallDirectory) {
+  $InstallDirectory = $SourceDirectory
+}
 
-IF ($CopyScripts -eq 1) {
-  Write-Output "Copy $SourceDirectory\Main.ps1 to $InstallDirectory"
-  Copy-Item "$SourceDirectory\Main.ps1" -Destination $InstallDirectory
 
-  Write-Output "Copy $SourceDirectory\launch.json to $InstallDirectory"
-  Copy-Item "$SourceDirectory\launch.json" -Destination $InstallDirectory
+IF ($InstallDirectory -ne $SourceDirectory) {
 
-  Write-Output "Copy $SourceDirectory\README.md to $InstallDirectory"
-  Copy-Item "$SourceDirectory\README.md" -Destination $InstallDirectory
+  IF (-not (Test-Path $InstallDirectory\Source)) {
+    Write-Verbose "Create folder 'Source'"
+    New-Item -ItemType Directory -Path $InstallDirectory\Source
+  }
+  Write-Verbose "Copy Source\Main.ps1"
+  Copy-Item "$SourceDirectory\Source\Main.ps1" -Destination $InstallDirectory\Source
+
+  Write-Verbose "Copy Source\launch.json"
+  Copy-Item "$SourceDirectory\Source\launch.json" -Destination $InstallDirectory\Source
+
+  IF (-not (Test-Path $InstallDirectory\Run)) {
+    Write-Verbose "Create folder 'Run'"
+    New-Item -ItemType Directory -Path $InstallDirectory\Run
+  }
+  Copy-Item "$SourceDirectory\Source\Main.ps1" -Destination $InstallDirectory\Run
+  Copy-Item "$SourceDirectory\Source\launch.json" -Destination $InstallDirectory\Run
 
   IF (-not (Test-Path $InstallDirectory\launchers)) {
-    Write-Output "Create folder 'launchers'"
+    Write-Verbose "Create folder 'launchers'"
     New-Item -ItemType Directory -Path $InstallDirectory\launchers
   }
+
+  IF (-not (Test-Path $InstallDirectory\Tools)) {
+    Write-Verbose "Create folder 'Tools'"
+    New-Item -ItemType Directory -Path $InstallDirectory\Tools
+  }
+  Write-Verbose "Copy Tools\CreateShortcut.ps1"
+  Copy-Item "$SourceDirectory\Tools\CreateShortcut.ps1" -Destination $InstallDirectory\Tools
+  Write-Verbose "Copy Tools\InstallSubModule.ps1"
+  Copy-Item "$SourceDirectory\Tools\InstallSubModule.ps1" -Destination $InstallDirectory\Tools
 }
 
 # Set environment variables
-Write-Output "Set `$env:PowerLauncher_InstallDir=$InstallDirectory"
+Write-Verbose "Set `$env:PowerLauncher_InstallDir=$InstallDirectory"
 [Environment]::SetEnvironmentVariable('PowerLauncher_InstallDir', $InstallDirectory, $Scope)
 
 
 # Installl Modules
-Write-Output "Installing Modules to the folder $ModuleTargetPath"
-Write-Output "Installing PowerLogger"
+Write-Verbose "Install Modules"
+Write-Verbose "     - Install PowerLogger"
 Copy-Item "$ModuleDir\PowerLogger" -Destination "$ModuleTargetPath" -Recurse -Force
-Write-Output "Installing PowerLauncher"
+Write-Verbose "     - Install PowerLauncher"
 Copy-Item "$ModuleDir\PowerLauncher" -Destination "$ModuleTargetPath" -Recurse -Force
 
-$MainFilePath = "$InstallDirectory\Main.ps1"
-$ShortcutFilePath = "$InstallDirectory\Run.lnk"
- 
-$WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut($ShortcutFilePath)
-$Shortcut.TargetPath = "powershell.exe"
-$Shortcut.Arguments = "-command ""& '$MainFilePath'"""
-$Shortcut.Save()
- 
-Write-Output "Created shortcut $ShortcutFilePath for $MainFilePath"
- 
-$bytes = [System.IO.File]::ReadAllBytes("$ShortcutFilePath")
-$bytes[0x15] = $bytes[0x15] -bor 0x20 #set byte 21 (0x15) bit 6 (0x20) ON
-[System.IO.File]::WriteAllBytes("$ShortcutFilePath", $bytes)
- 
-Write-Output "Allow the shortcut ($ShortcutFilePath) run as Administrator"
+# Create shortcut to run
+. "$InstallDirectory\Tools\CreateShortcut.ps1" -s "$InstallDirectory\Run\Main.ps1"
 
-Write-Output "Software has been installed successfully."
+Write-Verbose "Software has been installed successfully."
