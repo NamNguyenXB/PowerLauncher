@@ -5,7 +5,7 @@ Import-Module "PowerLogger"
 Import-Module "PowerLauncher"
 
 Write-Box -t "Begin"
-Write-Content "|  Root Folder: $InstallFolder"
+Write-Content "Root Folder: $InstallFolder" -l 1 -p "|"
 
 $ThisScriptDir = $PSScriptRoot
 IF ( $null -eq $ThisScriptDir) {
@@ -24,7 +24,7 @@ if (-not $Config.InstallFolder) {
   $Config | Add-Member -NotePropertyName InstallFolder -NotePropertyValue $InstallFolder
 }
 
-Write-Content "| Configurations: $Config"
+Write-Content "Configurations: $Config" -l 1 -p "|"
 
 # Run LauncherHeads
 Invoke-SetupLaunchers -l $SetupLaunchers -c $Config -h $true
