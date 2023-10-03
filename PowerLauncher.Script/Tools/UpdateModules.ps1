@@ -23,5 +23,7 @@ Write-Output "Install PowerLogger"
 Copy-Item "$ModuleDir\PowerLogger" -Destination "$ModulePath" -Recurse -Force
 Write-Output "Install PowerLauncher"
 Copy-Item "$ModuleDir\PowerLauncher" -Destination "$ModulePath" -Recurse -Force
+Write-Output "Install PowerInstaller"
+Copy-Item "$ModuleDir\PowerInstaller" -Destination "$ModulePath" -Recurse -Force
 
 Read-Host -Prompt "Press Enter to exit"

@@ -1,5 +1,163 @@
 {
-  "Launchers": [],
+  "Launchers": [
+    {
+      "ID": "WebConfig",
+      "Name": "Web.config Updater",
+      "Type": "WebConfig",
+      "Run": false
+    },
+    {
+      "ID": "DBBackup",
+      "Name": "Backup Database",
+      "Type": "DBBackup",
+      "BackupFile": "PDB_Parity4_10022023.bak",
+      "Run": false
+    },
+    {
+      "ID": "DBRestore",
+      "Name": "Restore Database",
+      "Type": "DBRestore",
+      "BackupFile": "PDB_Parity4_162.bak",
+      "BackupLogFile": "log.bak",
+      "Run": false
+    },
+    {
+      "ID": "DBRestore-2",
+      "Name": "Restore Database (2)",
+      "Type": "DBRestore",
+      "BackupFile": "PDB_Parity4_09202023.bak",
+      "BackupLogFile": "log2.bak",
+      "Run": false
+    },
+    {
+      "ID": "Flyway",
+      "Name": "Flyway",
+      "Type": "Flyway",
+      "BaseLineVersion": 162,
+      "RepairBeforeMigrate": true,
+      "UserName": "parity_sa",
+      "Password": "parity2000",
+      "Run": false
+    },
+    {
+      "ID": "RunSqlScript",
+      "Name": "Run Sql Server Script",
+      "Type": "SqlScript",
+      "Script": "Create-NewItem-3.sql",
+      "Run": false
+    },
+    {
+      "ID": "LicenseHack",
+      "Name": "License Hack",
+      "Type": "PackageFileCopy",
+      "Source": "LicenseHack",
+      "Dest": "",
+      "Run": false
+    },
+    {
+      "ID": "LicenseHack158",
+      "Name": "License Hack",
+      "Type": "PackageFileCopy",
+      "Source": "LicenseHackv158",
+      "Dest": "",
+      "Run": false
+    },
+    {
+      "ID": "PFOffice",
+      "Name": "Publish PF Office",
+      "Type": "VSPublish",
+      "ProjectID": "Parity4",
+      "PublishUrl": "W:\\ParityCorp\\Parity4",
+      "Run": false
+    },
+    {
+      "ID": "Parity4WebApi",
+      "Name": "Publish Parity4 WebApi",
+      "Type": "VSPublish",
+      "ProjectID": "Parity4WebApi",
+      "PublishUrl": "W:\\ParityCorp\\Parity4WebAPI",
+      "Run": false
+    },
+    {
+      "ID": "Parity4LinkERPWebApi",
+      "Name": "Publish Parity4 LinkERP WebApi",
+      "Type": "VSPublish",
+      "ProjectID": "Parity4LinkERPWebApi",
+      "PublishUrl": "W:\\ParityCorp\\Parity4LinkERPWebAPI",
+      "Run": false
+    },
+    {
+      "ID": "Parity4BTMobileSPA",
+      "Name": "Publish PF Mobile",
+      "Type": "VSPublish",
+      "ProjectID": "Parity4BTMobileSPA",
+      "PublishUrl": "W:\\ParityCorp\\Parity4BTMobileSPA",
+      "Run": false
+    },
+    {
+      "ID": "Item_In",
+      "Name": "Run LinkERP Process",
+      "Type": "LinkERP",
+      "Uri": "http://localhost/Parity4LinkERPWebAPI/api/INApplication/NetSuite/v2/In",
+      "UserId": "Tony",
+      "ProcessId": "Item_In",
+      "Run": false
+    },
+    {
+      "ID": "Vendor_In",
+      "Name": "Run LinkERP Process",
+      "Type": "LinkERP",
+      "Uri": "http://localhost/Parity4LinkERPWebAPI/api/INApplication/NetSuite/v2/In",
+      "UserId": "Tony",
+      "ProcessId": "Vendor_In",
+      "Run": false
+    },
+    {
+      "ID": "Customer_In",
+      "Name": "Run LinkERP Process",
+      "Type": "LinkERP",
+      "Uri": "http://localhost/Parity4LinkERPWebAPI/api/INApplication/NetSuite/v2/In",
+      "UserId": "Tony",
+      "ProcessId": "Customer_In",
+      "Run": false
+    },
+    {
+      "ID": "SalesOrder_In",
+      "Name": "Run LinkERP Process",
+      "Type": "LinkERP",
+      "Uri": "http://localhost/Parity4LinkERPWebAPI/api/INApplication/NetSuite/v2/In",
+      "UserId": "Tony",
+      "ProcessId": "SalesOrder_In",
+      "Run": true
+    },
+    {
+      "ID": "RunProcess_IN_Debug",
+      "Name": "Run LinkERP Process",
+      "Type": "LinkERP",
+      "Uri": "http://localhost:64065/Parity4LinkERPWebAPI/api/INApplication/NetSuite/v2/In",
+      "UserId": "Tony",
+      "ProcessId": "",
+      "Run": false
+    },
+    {
+      "ID": "RunProcess_OUT",
+      "Name": "Run LinkERP Process",
+      "Type": "LinkERP",
+      "Uri": "http://localhost/Parity4LinkERPWebAPI/api/INApplication/NetSuite/v2/Out",
+      "UserId": "Tony",
+      "ProcessId": "ProductionAdjustment_Out",
+      "Run": false
+    },
+    {
+      "ID": "RunProcess_OUT_DEBUG",
+      "Name": "Run LinkERP Process",
+      "Type": "LinkERP",
+      "Uri": "http://localhost:64065/Parity4LinkERPWebAPI/api/INApplication/NetSuite/v2/Out",
+      "UserId": "Tony",
+      "ProcessId": "",
+      "Run": false
+    }
+  ],
   "SetupLaunchers": [
     {
       "ID": "IIS",
@@ -24,6 +182,36 @@
     }
   ],
   "Configuration": {
-    "CloseWhenDone": false
+    "RepoFolder": "R:\\PF-Parity4",
+    "SqlServer": "SONG-NAMNGUYEN",
+    "Database": "PDB_Parity4",
+    "Parity4WebApiUrl": "http://localhost/Parity4WebAPI/api",
+    "CloseWhenDone": false,
+    "Projects": [
+      {
+        "ID": "Parity4",
+        "Name": "Parity 4 Office",
+        "ProjectFolder": "Source\\Parity4\\Parity4.Web",
+        "VSProjectFile": "Parity4.Web.csproj"
+      },
+      {
+        "ID": "Parity4WebApi",
+        "Name": "Parity 4 Web API",
+        "ProjectFolder": "Source\\Parity4WebAPI\\Parity4WebAPI",
+        "VSProjectFile": "Parity4WebAPI.csproj"
+      },
+      {
+        "ID": "Parity4LinkERPWebApi",
+        "Name": "Parity 4 LinkERP Web API",
+        "ProjectFolder": "Source\\Parity4LinkERPWebAPI\\Parity4LinkERPWebAPI",
+        "VSProjectFile": "Parity4LinkERPWebAPI.csproj"
+      },
+      {
+        "ID": "Parity4BTMobileSPA",
+        "Name": "Parity 4 Mobile",
+        "ProjectFolder": "Source\\Parity4BTMobileSPA\\Parity4BTMobileSPA",
+        "VSProjectFile": "Parity4BTMobileSPA.csproj"
+      }
+    ]
   }
 }
