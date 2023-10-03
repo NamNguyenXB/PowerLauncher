@@ -21,7 +21,11 @@ param (
   [ValidateScript({ ($_ -eq $null) -or (Test-Path $_) })]
   $DestinationDirectory,
   [Alias("n")]
-  $ShortcutName = "Run.lnk"
+  $ShortcutName = "Run.lnk",
+  [Alias("p")]
+  $ScriptParameters = "",
+  [Alias("a")]
+  [switch]$AdminRequired
 )
 
 # Initialize variables
@@ -92,23 +96,25 @@ Write-Verbose "Creating the shortcut..."
 $WshShell = New-Object -comObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut($ShortcutPath)
 $Shortcut.TargetPath = "powershell.exe"
-$Shortcut.Arguments = "-command ""& '$SourceFilePath'"""
+$Shortcut.Arguments = "-command ""& '$SourceFilePath'  $ScriptParameters"""
 $Shortcut.Save()
 $host.UI.RawUI.CursorPosition = $pos
 Write-Verbose $blankLine
 $host.UI.RawUI.CursorPosition = $pos
 Write-Verbose "Created a new shortcut: $ShortcutPath"
- 
+
 # Modify the shortcut's access privilege
-$pos = $host.UI.RawUI.CursorPosition
-Write-Verbose "Modifying the shortcut..."
-$bytes = [System.IO.File]::ReadAllBytes("$ShortcutPath")
-$bytes[0x15] = $bytes[0x15] -bor 0x20 #set byte 21 (0x15) bit 6 (0x20) ON
-[System.IO.File]::WriteAllBytes("$ShortcutPath", $bytes)
-$host.UI.RawUI.CursorPosition = $pos
-Write-Verbose $blankLine
-$host.UI.RawUI.CursorPosition = $pos
-Write-Verbose "Modified the shortcut ($ShortcutPath)"
+if($AdminRequired){
+  $pos = $host.UI.RawUI.CursorPosition
+  Write-Verbose "Modifying the shortcut..."
+  $bytes = [System.IO.File]::ReadAllBytes("$ShortcutPath")
+  $bytes[0x15] = $bytes[0x15] -bor 0x20 #set byte 21 (0x15) bit 6 (0x20) ON
+  [System.IO.File]::WriteAllBytes("$ShortcutPath", $bytes)
+  $host.UI.RawUI.CursorPosition = $pos
+  Write-Verbose $blankLine
+  $host.UI.RawUI.CursorPosition = $pos
+  Write-Verbose "Modified the shortcut ($ShortcutPath)"
+}
 
 # Completed! Write log
 Write-Verbose "Done! The shortcut was created successfully."
