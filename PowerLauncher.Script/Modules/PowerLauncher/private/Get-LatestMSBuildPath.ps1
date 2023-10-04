@@ -19,7 +19,7 @@
         $expected64bitPathWithWildcards = "$visualStudioDirectoryPath\*\*\MsBuild\*\Bin\amd64\MsBuild.exe"
         $msBuildPathObjects = Get-Item -Path $expected32bitPathWithWildcards, $expected64bitPathWithWildcards
 
-        [bool] $msBuildWasNotFound = ($msBuildPathObjects -eq $null) -or ($msBuildPathObjects.Length -eq 0)
+        [bool] $msBuildWasNotFound = ($null -eq $msBuildPathObjects) -or ($msBuildPathObjects.Length -eq 0)
         if ($msBuildWasNotFound) {
             # Recurisvely search the entire Microsoft Visual Studio directory for MsBuild (slower, but will still work if MS changes folder structure).
             Write-Verbose "MsBuild.exe was not found at an expected location. Searching more locations, but this will be a little slow."

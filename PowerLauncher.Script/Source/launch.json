@@ -2,7 +2,7 @@
   "Launchers": [
     {
       "ID": "WebConfig",
-      "Name": "Web.config Updater",
+      "Name": "Parity4 Web.config Updater",
       "Type": "WebConfig",
       "Run": false
     },
@@ -10,6 +10,7 @@
       "ID": "DBBackup",
       "Name": "Backup Database",
       "Type": "DBBackup",
+      "BackupFolder": "",
       "BackupFile": "PDB_Parity4_10022023.bak",
       "Run": false
     },
@@ -19,19 +20,12 @@
       "Type": "DBRestore",
       "BackupFile": "PDB_Parity4_162.bak",
       "BackupLogFile": "log.bak",
-      "Run": false
-    },
-    {
-      "ID": "DBRestore-2",
-      "Name": "Restore Database (2)",
-      "Type": "DBRestore",
-      "BackupFile": "PDB_Parity4_09202023.bak",
-      "BackupLogFile": "log2.bak",
+      "BackupFolder": "",
       "Run": false
     },
     {
       "ID": "Flyway",
-      "Name": "Flyway",
+      "Name": "Run Flyway",
       "Type": "Flyway",
       "BaseLineVersion": 162,
       "RepairBeforeMigrate": true,
@@ -48,17 +42,10 @@
     },
     {
       "ID": "LicenseHack",
-      "Name": "License Hack",
+      "Name": "Copy files from [PackageFolder or InstallFolder]/[Source] to [RepoFolder]/[Dest]",
       "Type": "PackageFileCopy",
+      "PackageFolder": "",
       "Source": "LicenseHack",
-      "Dest": "",
-      "Run": false
-    },
-    {
-      "ID": "LicenseHack158",
-      "Name": "License Hack",
-      "Type": "PackageFileCopy",
-      "Source": "LicenseHackv158",
       "Dest": "",
       "Run": false
     },
@@ -101,60 +88,7 @@
       "Uri": "http://localhost/Parity4LinkERPWebAPI/api/INApplication/NetSuite/v2/In",
       "UserId": "Tony",
       "ProcessId": "Item_In",
-      "Run": false
-    },
-    {
-      "ID": "Vendor_In",
-      "Name": "Run LinkERP Process",
-      "Type": "LinkERP",
-      "Uri": "http://localhost/Parity4LinkERPWebAPI/api/INApplication/NetSuite/v2/In",
-      "UserId": "Tony",
-      "ProcessId": "Vendor_In",
-      "Run": false
-    },
-    {
-      "ID": "Customer_In",
-      "Name": "Run LinkERP Process",
-      "Type": "LinkERP",
-      "Uri": "http://localhost/Parity4LinkERPWebAPI/api/INApplication/NetSuite/v2/In",
-      "UserId": "Tony",
-      "ProcessId": "Customer_In",
-      "Run": false
-    },
-    {
-      "ID": "SalesOrder_In",
-      "Name": "Run LinkERP Process",
-      "Type": "LinkERP",
-      "Uri": "http://localhost/Parity4LinkERPWebAPI/api/INApplication/NetSuite/v2/In",
-      "UserId": "Tony",
-      "ProcessId": "SalesOrder_In",
-      "Run": true
-    },
-    {
-      "ID": "RunProcess_IN_Debug",
-      "Name": "Run LinkERP Process",
-      "Type": "LinkERP",
-      "Uri": "http://localhost:64065/Parity4LinkERPWebAPI/api/INApplication/NetSuite/v2/In",
-      "UserId": "Tony",
-      "ProcessId": "",
-      "Run": false
-    },
-    {
-      "ID": "RunProcess_OUT",
-      "Name": "Run LinkERP Process",
-      "Type": "LinkERP",
-      "Uri": "http://localhost/Parity4LinkERPWebAPI/api/INApplication/NetSuite/v2/Out",
-      "UserId": "Tony",
-      "ProcessId": "ProductionAdjustment_Out",
-      "Run": false
-    },
-    {
-      "ID": "RunProcess_OUT_DEBUG",
-      "Name": "Run LinkERP Process",
-      "Type": "LinkERP",
-      "Uri": "http://localhost:64065/Parity4LinkERPWebAPI/api/INApplication/NetSuite/v2/Out",
-      "UserId": "Tony",
-      "ProcessId": "",
+      "TriggerId": "",
       "Run": false
     }
   ],
