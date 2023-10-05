@@ -25,8 +25,8 @@ function Write-Content {
     $ForegroundColor = $null,
     $BackgroundColor = $null
   )
-  $Spaces = " " * ($TabSize * $Level + 1)
-  $Content = $Prefix + $Spaces + $Content
+  $Spaces = " " * ($TabSize * $Level)
+  $Content = $Prefix + " " + $Spaces + $Content
 
   $params = ""
   if ($null -ne $NoNewline) {
