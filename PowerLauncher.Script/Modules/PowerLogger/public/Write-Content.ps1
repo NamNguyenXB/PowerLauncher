@@ -26,7 +26,10 @@ function Write-Content {
     $BackgroundColor = $null
   )
   $Spaces = " " * ($TabSize * $Level)
-  $Content = $Prefix + " " + $Spaces + $Content
+  if (($null -ne $Prefix) -and ("" -ne $Prefix)) {
+    $Prefix += " "
+  }
+  $Content = $Prefix + $Spaces + $Content
 
   $params = ""
   if ($null -ne $NoNewline) {
@@ -42,5 +45,5 @@ function Write-Content {
     $params = "$params -BackgroundColor $BackgroundColor"
   }
 
-  Write-Host $Content $params
+  Invoke-Expression ("Write-Host $Content $params")
 }
