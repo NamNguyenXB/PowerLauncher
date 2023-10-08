@@ -15,5 +15,5 @@ function Write-LauncherTail {
     $Launcher
   )
   Write-Line
-  Write-Box -c $Launcher.Name -t "End  "
+  Write-Box -c $Launcher.Name -t "End  " -BackgroundColor Yelow -ForegroundColor Black
 }

@@ -14,13 +14,12 @@ function Write-LauncherHead {
     [Parameter(HelpMessage = "Launcher to display.")]
     $Launcher
   )
-
-  Write-Box -Content $Launcher.Name -Tag "Begin"
+  Write-Box -Content $Launcher.Name -Tag "Begin" -BackgroundColor Yelow -ForegroundColor Black
   Write-Line
-  Write-Content "|  Launch Options:"
+  Write-Content "Launch Options:" -Level 1 -Prefix "|"
   $Launcher.PSObject.Properties | ForEach-Object {
     if (($_.Name) -ne "Name") {
-      Write-Content "|  - $(${_}.Name): $(${_}.Value)"
+      Write-Content "$(${_}.Name): $(${_}.Value)" -Level 2 -Prefix "|" -ForegroundColor Yelow
     }
   }
 }
