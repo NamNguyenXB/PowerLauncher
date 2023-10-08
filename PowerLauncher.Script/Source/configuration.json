@@ -1,0 +1,33 @@
+{
+  "RepoFolder": "R:\\PF-Parity4",
+  "SqlServer": "SONG-NAMNGUYEN",
+  "Database": "PDB_Parity4",
+  "Parity4WebApiUrl": "http://localhost/Parity4WebAPI/api",
+  "CloseWhenDone": false,
+  "Projects": [
+    {
+      "ID": "Parity4",
+      "Name": "Parity 4 Office",
+      "ProjectFolder": "Source\\Parity4\\Parity4.Web",
+      "VSProjectFile": "Parity4.Web.csproj"
+    },
+    {
+      "ID": "Parity4WebApi",
+      "Name": "Parity 4 Web API",
+      "ProjectFolder": "Source\\Parity4WebAPI\\Parity4WebAPI",
+      "VSProjectFile": "Parity4WebAPI.csproj"
+    },
+    {
+      "ID": "Parity4LinkERPWebApi",
+      "Name": "Parity 4 LinkERP Web API",
+      "ProjectFolder": "Source\\Parity4LinkERPWebAPI\\Parity4LinkERPWebAPI",
+      "VSProjectFile": "Parity4LinkERPWebAPI.csproj"
+    },
+    {
+      "ID": "Parity4BTMobileSPA",
+      "Name": "Parity 4 Mobile",
+      "ProjectFolder": "Source\\Parity4BTMobileSPA\\Parity4BTMobileSPA",
+      "VSProjectFile": "Parity4BTMobileSPA.csproj"
+    }
+  ]
+}
