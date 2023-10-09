@@ -78,8 +78,6 @@ function New-Shortcut {
 
   $Shortcut.Save()
 
-  $Shortcut.
-
   # Modify the shortcut's access privilege
   if ($RunAsAdministrator) {
     Write-Verbose "Setup shortcut - RunAsAdministrator"

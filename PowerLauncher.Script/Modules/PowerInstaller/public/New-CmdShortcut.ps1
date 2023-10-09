@@ -15,7 +15,7 @@ function New-CmdShortcut {
   param(
     $ShortcutPath,
     $Command,
-    $Parameters,
+    $Parameters="",
     [switch]$RunAsAdministrator
   )
 

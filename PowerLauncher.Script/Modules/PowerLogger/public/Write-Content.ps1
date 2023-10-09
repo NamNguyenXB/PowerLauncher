@@ -20,7 +20,7 @@ function Write-Content {
     $TabSize = 2,
     [Alias("l")]
     $Level = 0,
-    $NoNewline = $null,
+    [switch]$NoNewline = $null,
     $Separator = $null,
     $ForegroundColor = $null,
     $BackgroundColor = $null
@@ -32,9 +32,6 @@ function Write-Content {
   $Content = $Prefix + $Spaces + $Content
 
   $params = ""
-  if ($null -ne $NoNewline) {
-    $params = "$params -NoNewLine"
-  }
   if ($null -ne $Separator) {
     $params = "$params -Separator $Separator"
   }
@@ -44,6 +41,9 @@ function Write-Content {
   if ($null -ne $BackgroundColor) {
     $params = "$params -BackgroundColor $BackgroundColor"
   }
+  if ($True -eq $NoNewline) {
+    $params = "$params -NoNewLine"
+  }
 
-  Invoke-Expression ("Write-Host $Content $params")
+  Invoke-Expression ("Write-Host '$Content' $params")
 }

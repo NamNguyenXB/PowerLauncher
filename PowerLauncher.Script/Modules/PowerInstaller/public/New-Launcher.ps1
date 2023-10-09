@@ -60,7 +60,6 @@ function New-Launcher {
   }
 
   # Get destination file path
-  $ShortcutPath = "$LauncherDirectory\$LauncherName.lnk"
   $Params = ""
   $Params += " -ConfigurationPath $ConfigurationPath"
   $Params += " -SetupPath $SetupPath"
@@ -68,5 +67,6 @@ function New-Launcher {
 
   # Create a new shortcut file
   Write-Verbose "Create new shortcut"
-  New-CmdShortcut -ShortcutPath $ShortcutPath -Command "Start-Launcher" -Parameters $params -RunAsAdministrator
+  Write-Output "Import-Module PowerLauncher;Start-Launcher $Params" > "$LauncherDirectory\$LauncherName.ps1"
+  New-Shortcut -f "$LauncherDirectory\$LauncherName.ps1" -RunAsAdministrator
 }

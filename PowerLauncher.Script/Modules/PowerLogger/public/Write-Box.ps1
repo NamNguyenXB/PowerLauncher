@@ -29,7 +29,11 @@ function Write-Box {
     [String] $Content,
     [Alias("t")]
     [Parameter(HelpMessage = "Content Tag")]
-    [String] $Tag
+    [String] $Tag,
+    $ForegroundColor = $null,
+    $BackgroundColor = $null,
+    $TagForegroundColor = $null,
+    $TagBackgroundColor = $null
   )
 
   # Allow null
@@ -42,16 +46,17 @@ function Write-Box {
   }
 
   if (($Tag.Length -gt 1) -and ($Content.Length -gt 1)) {
-    $Delimiter = " | "
+    $Tail = " | " + $Tag
   }
   else {
-    $Delimiter = ""
+    $Tail = ""
   }
 
-  $Content = $Content + $Delimiter + $Tag
-  $Dashes = "o" + "-" * ($Content.Length + 2) + "o"
+  $Dashes = "o" + "-" * ($Content.Length + 2 + $Tail.Length) + "o"
 
   Write-Content $Dashes
-  Write-Content "| $Content |"
+  Write-Content "| " -NoNewline
+  Write-Content "$Content" -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor -NoNewline
+  Write-Content "$Tail |" -ForegroundColor $TagForegroundColor -BackgroundColor $TagBackgroundColor
   Write-Content $Dashes
 }

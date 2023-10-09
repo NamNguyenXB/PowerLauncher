@@ -86,6 +86,7 @@ IF($Answer -eq 'N'){
 }
 
 Write-Output "Import Module PowerInstaller"
+
 Import-Module "$ModuleDir\PowerInstaller"
 
 IF ($InstallDirectory -ne $SourceDirectory) {
@@ -118,6 +119,6 @@ Write-Output "Create shortcut Update.lnk"
 New-Shortcut -f "$InstallDirectory\Tools\Update.ps1" -d $InstallDirectory -n "Update.lnk" -a -p $SourceDirectory -i "$InstallDirectory\Icons\Download.ico"
 
 Write-Output "Create shortcut New-Launcher.lnk"
-New-CmdShortcut -ShortcutPath "$InstallDirectory\New-Launcher.lnk" -Command "New-Launcher" -RunAsAdministrator
+New-CmdShortcut -ShortcutPath "$InstallDirectory\New-Launcher.lnk" -Command "Import-Module PowerInstaller;New-Launcher" -RunAsAdministrator
 
-Write-Output "Done. Software has been installed successfully."
+Read-Host "Done. Software has been installed successfully"
