@@ -18,12 +18,13 @@ function Invoke-SetupLauncher {
     [Alias("c")]
     $Config,
     [Alias("h")]
-    [bool] $Head = $true
+    [switch] $Head
   )
   if ($SetupLauncher.Run) {
-    IF( $true -eq $Head){
+    IF ($Head.IsPresent) {
       $Launcher = $SetupLauncher.LauncherHead
-    } ELSE {
+    }
+    ELSE {
       $Launcher = $SetupLauncher.LauncherTail
     }
     

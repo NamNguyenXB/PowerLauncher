@@ -25,36 +25,31 @@ function New-Launcher {
     $ModulesPath = $null
   )
 
-  if(($null -eq $LauncherName) -or ("" -eq $LauncherName)){
+  if (($null -eq $LauncherName) -or ("" -eq $LauncherName)) {
     $LauncherName = Read-Host "New launcher name"
-    if(($null -eq $LauncherName) -or ("" -eq $LauncherName)){
+    if (($null -eq $LauncherName) -or ("" -eq $LauncherName)) {
       throw "Launcher name must not be null or empty."
     }
   }
 
   $SoftwareDirectory = $env:PowerLauncher_InstallDir
-  $TemplatesDirectory = "$SoftwareDirectory\Templates"
-  $LaunchersDirectory = "$SoftwareDirectory\Launchers"
-  if(-not(Test-Path $LaunchersDirectory)){
-    New-Item -ItemType Directory -Path $LaunchersDirectory
-  }
 
-  $LauncherDirectory = "$LaunchersDirectory\$LauncherName"
-  if(-not(Test-Path $LauncherDirectory)){
+  # Create a new directory for the new Launcher.
+  $LauncherDirectory = "$SoftwareDirectory\Launchers\$LauncherName"
+  if (-not(Test-Path $LauncherDirectory)) {
     New-Item -ItemType Directory -Path $LauncherDirectory
   }
 
-  # Copy config files to this launcher.
-  if( ($null -eq $ConfigurationPath)){
+  if (($null -eq $ConfigurationPath)) {
     $ConfigurationPath = "$SoftwareDirectory\configuration.json"
   }
 
-  if($null -eq $SetupPath){
+  if ($null -eq $SetupPath) {
     Copy-Item "$TemplatesDirectory\setup.json" -Destination "$LauncherDirectory" -ErrorAction SilentlyContinue
     $SetupPath = "$LauncherDirectory\setup.json"
   }
 
-  if($null -eq $ModulesPath){
+  if ($null -eq $ModulesPath) {
     Write-Output "[]" > "$LauncherDirectory\modules.json"
     $ModulesPath = "$LauncherDirectory\modules.json"
   }
