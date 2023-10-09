@@ -26,28 +26,29 @@ param (
   [Alias("s", "source")]
   [Parameter(HelpMessage = "Specify the source directory. Must be an valid folder path.")]
   [ValidateScript({ ($_ -eq $null) -or (Test-Path $_) })]
-  $SourceDirectory
+  $SourceDirectory = $null
 )
-
-# Get this script directory.
-$ThisScriptDir = $PSScriptRoot
-IF ( $null -eq $ThisScriptDir) {
-  $ThisScriptDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
-}
 
 # Get Source Dỉrectory
 IF ($null -eq $SourceDirectory) {
+  $ThisScriptDir = $PSScriptRoot
+  IF ( $null -eq $ThisScriptDir) {
+    $ThisScriptDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
+  }
   $SourceDirectory = "$ThisScriptDir\.."
 }
-Write-Output "Source: $SourceDirectory"
+
+# Get Module list
+$PSModules = $("PowerLogger", "PowerLauncher", "PowerInstaller")
 
 # Get Install Directory
-IF( $null -eq $InstallDirectory){
+IF ( $null -eq $InstallDirectory) {
   $InstallDirectory = Read-Host "Install to"
-  If(-not (Test-Path $InstallDirectory)){
+  If (-not (Test-Path $InstallDirectory)) {
     throw "Invalid directory. Stop."
   }
-} else{
+}
+else {
   Write-Output "Install to: $InstallDirectory"
 }
 
@@ -60,13 +61,13 @@ IF (-not (Test-Path $ModuleDir)) {
   throw "`$ModuleDir($ModuleDir) is not a folder"
 }
 IF (-not(Test-Path "$ModuleDir\PowerLogger")) {
-  throw "Module PowerLogger was not found."
+  throw "Module PowerLogger is not found."
 }
 IF (-not(Test-Path "$ModuleDir\PowerLauncher")) {
-  throw "Module PowerLauncher was not found."
+  throw "Module PowerLauncher is not found."
 }
 IF (-not(Test-Path "$ModuleDir\PowerInstaller")) {
-  throw "Module PowerInstaller was not found."
+  throw "Module PowerInstaller is not found."
 }
 
 # Get directory to install modules.
@@ -81,7 +82,7 @@ IF (-not (Test-Path $ModulePath)) {
 }
 
 $Answer = Read-Host "Ready to Install. Continue[Y/N]? (Defaults to Y)"
-IF($Answer -eq 'N'){
+IF ($Answer -eq 'N') {
   return;
 }
 
@@ -95,7 +96,7 @@ IF ($InstallDirectory -ne $SourceDirectory) {
   Copy-Item "$SourceDirectory\Icons" -Destination "$InstallDirectory" -Recurse -ErrorAction SilentlyContinue
 }
 
-if(-not(Test-Path "$InstallDirectory\configuration.json")){
+if (-not(Test-Path "$InstallDirectory\configuration.json")) {
   Write-Output "{}" > "$InstallDirectory\configuration.json"
 }
 

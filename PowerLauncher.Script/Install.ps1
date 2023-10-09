@@ -1,6 +1,3 @@
-﻿$ThisScriptDir = $PSScriptRoot
-IF ( $null -eq $ThisScriptDir) {
-  $ThisScriptDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
-}
+﻿$ThisScriptDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
 
 Start-Process powershell -ArgumentList "-file $ThisScriptDir\Tools\Install.ps1" -Verb RunAs
