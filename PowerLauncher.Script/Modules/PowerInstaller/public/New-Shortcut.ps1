@@ -29,7 +29,10 @@ function New-Shortcut {
     $ScriptParameters = "",
     [Alias("a")]
     [Parameter(HelpMessage = "RunAsAdministrator.")]
-    [switch]$RunAsAdministrator
+    [switch]$RunAsAdministrator,
+    [Alias("i")]
+    [ValidateScript({ ($_ -eq $null) -or (Test-Path $_) })]
+    $Icon
   )
 
   # Get default SourceFilePath
@@ -68,7 +71,14 @@ function New-Shortcut {
   $Shortcut = $WshShell.CreateShortcut($ShortcutPath)
   $Shortcut.TargetPath = "powershell.exe"
   $Shortcut.Arguments = "-command ""& '$FilePath' $ScriptParameters"""
+
+  if($null -ne $Icon){
+    $Shortcut.IconLocation = $Icon
+  }
+
   $Shortcut.Save()
+
+  $Shortcut.
 
   # Modify the shortcut's access privilege
   if ($RunAsAdministrator) {

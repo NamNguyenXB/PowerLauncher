@@ -43,12 +43,13 @@ Write-Output "Source: $SourceDirectory"
 
 # Get Install Directory
 IF( $null -eq $InstallDirectory){
-  $InstallDirectory = Read-Host "Please input the install-to directory:"
+  $InstallDirectory = Read-Host "Install to"
   If(-not (Test-Path $InstallDirectory)){
     throw "Invalid directory. Stop."
   }
+} else{
+  Write-Output "Install to: $InstallDirectory"
 }
-Write-Output "Install to: $InstallDirectory"
 
 # Get Modules directory.
 $ModuleDir = "$SourceDirectory\Modules"
@@ -65,9 +66,10 @@ IF (-not(Test-Path "$ModuleDir\PowerLauncher")) {
   throw "Module PowerLauncher was not found."
 }
 IF (-not(Test-Path "$ModuleDir\PowerInstaller")) {
-  throw "Module PowerLauncher was not found."
+  throw "Module PowerInstaller was not found."
 }
 
+# Get directory to install modules.
 $ModulePaths = $env:PSModulePath -split ';'
 IF ( $ModulePaths.Length -lt 1) {
   throw "`$env:PSModulePath is empty."
@@ -87,9 +89,13 @@ Write-Output "Import Module PowerInstaller"
 Import-Module "$ModuleDir\PowerInstaller"
 
 IF ($InstallDirectory -ne $SourceDirectory) {
-  Copy-Item "$SourceDirectory\Source\*" -Destination "$InstallDirectory" -Recurse -ErrorAction SilentlyContinue
-  Copy-Item "$SourceDirectory\Source" -Destination "$InstallDirectory" -Recurse -ErrorAction SilentlyContinue
+  Copy-Item "$SourceDirectory\Templates" -Destination "$InstallDirectory" -Recurse -ErrorAction SilentlyContinue
   Copy-Item "$SourceDirectory\Tools" -Destination "$InstallDirectory" -Recurse -ErrorAction SilentlyContinue
+  Copy-Item "$SourceDirectory\Icons" -Destination "$InstallDirectory" -Recurse -ErrorAction SilentlyContinue
+}
+
+if(-not(Test-Path "$InstallDirectory\configuration.json")){
+  Write-Output "{}" > "$InstallDirectory\configuration.json"
 }
 
 # Set environment variables
@@ -108,13 +114,10 @@ Copy-Item "$ModuleDir\PowerLauncher" -Destination "$ModulePath" -Recurse -Force 
 Write-Output "Install PowerInstaller"
 Copy-Item "$ModuleDir\PowerInstaller" -Destination "$ModulePath" -Recurse -Force -ErrorAction SilentlyContinue
 
-Write-Output "Create shortcut Run.lnk"
-New-Shortcut -f "$InstallDirectory\Main.ps1" -n "Run.lnk" -a
-
 Write-Output "Create shortcut Update.lnk"
-New-Shortcut -f "$InstallDirectory\Tools\UpdateModules.ps1" -d $InstallDirectory -n "Update.lnk" -a -p $SourceDirectory
+New-Shortcut -f "$InstallDirectory\Tools\Update.ps1" -d $InstallDirectory -n "Update.lnk" -a -p $SourceDirectory -i "$InstallDirectory\Icons\Download.ico"
 
-Write-Output "Create shortcut New-Submodule.lnk"
-New-Shortcut -f "$InstallDirectory\Tools\InstallSubModule.ps1" -d $InstallDirectory -n "New-Submodule.lnk" -a
+Write-Output "Create shortcut New-Launcher.lnk"
+New-CmdShortcut -ShortcutPath "$InstallDirectory\New-Launcher.lnk" -Command "New-Launcher" -RunAsAdministrator
 
 Write-Output "Done. Software has been installed successfully."
