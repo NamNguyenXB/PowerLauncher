@@ -6,28 +6,24 @@ Write information (Head) of a launcher.
 Launcher to display.
 
 .EXAMPLE
-Write-LauncherHead -Launcher $Launcher
+Write-LauncherHead -Launcher $Module
 #>
-function Write-LauncherHead {
+function Write-ModuleHead {
   param (
-    [Alias("l")]
-    [Parameter(HelpMessage = "Launcher to display.")]
-    $Launcher
+    [Alias("m")]
+    [Parameter(HelpMessage = "Module to display.")]
+    $Module
   )
-  #Write-Box -Content $Launcher.Name -Tag "Begin" -ForegroundColor Black -BackgroundColor Yellow
 
-  if($Launcher.Run){
+  if(Confirm-ModuleRun -Module $Module){
 
     # Print title
-    $ShortLine = " " * 10
-    Write-Content $ShortLine -ForegroundColor White -BackgroundColor Blue
-    $Header = " $($Launcher.Name) "
-    Write-Content " " -ForegroundColor White -BackgroundColor Blue -NoNewline
-    Write-Content "$Header" -ForegroundColor Black -BackgroundColor Yellow
+    Write-Title $($Module.Name)
+
     Write-Content " " -ForegroundColor White -BackgroundColor Blue
     Write-Content ">" -Level 1 -ForegroundColor White -BackgroundColor Blue -NoNewline
     Write-Content " Run Details " -ForegroundColor Black -BackgroundColor Gray
-    $Launcher.PSObject.Properties | ForEach-Object {
+    $Module.PSObject.Properties | ForEach-Object {
       if ((($_.Name) -ne "Name") -and (($_.Name) -ne "Run")) {
         if(($null -ne ${_}.Value) -and ("" -ne ${_}.Value)){
           Write-Content " " -ForegroundColor White -BackgroundColor Blue -NoNewline

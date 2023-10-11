@@ -5,8 +5,8 @@ Write a line.
 .PARAMETER LineLength
 Length of the line. Defaults to 120.
 
-.PARAMETER Character
-Character to draw the line. Default to '-'.
+.PARAMETER Content
+Content to draw the line. Default to '-'.
 
 .EXAMPLE
 Write-Line
@@ -15,21 +15,26 @@ Write-Line -LineLength 10
 #>
 function Write-Line {
   param(
-    [Alias("l")]
     [Parameter(HelpMessage = "Length of the line. Default to 120.")]
-    [int16] $LineLength = 120,
-    [Alias("c")]
-    [Parameter(HelpMessage = "Character to draw the line. Default to '-'.")]
-    $Character = "-"
+    [int16] $Size = 120,
+    [Parameter(HelpMessage = "Content to draw the line. Default to '-'.")]
+    $Content = "-",
+    $Color,
+    [Switch]$NoNewline
   )
-  if(($null -eq $Character) -or ($Character.Length -lt 1)){
-    $Character = "-"
+  if (($null -eq $Content) -or ($Content.Length -lt 1)) {
+    $Content = "-"
   }
 
-  if($Character.Length -gt 1){
-    $Character = $Character[0]
+  if ($Content.Length -gt 1) {
+    $Content = $Content[0]
   }
 
-  $Line = $Character * $LineLength
-  Write-Content $Line
+  $Line = $Content * $LineLength
+  if ($NoNewline.IsPresent) {
+    Write-Content $Line -BackgroundColor $Color -NoNewline
+  }
+  else {
+    Write-Content $Line -BackgroundColor $Color
+  }
 }
