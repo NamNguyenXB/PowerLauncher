@@ -20,7 +20,7 @@ function Invoke-Launcher {
     return;
   }
 
-  Write-LauncherHead -l $Launcher
+  Write-ModuleHead -l $Launcher
 
   $Type = $Launcher.Type
   $FunctionName = "Invoke-" + $Type
@@ -36,5 +36,5 @@ function Invoke-Launcher {
     Write-Content "|  Cannot run! Type $Type is not supported."
   }
 
-  Write-LauncherTail -l $Launcher
+  Write-ModuleTail -l $Launcher
 }
