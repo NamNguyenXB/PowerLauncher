@@ -45,7 +45,7 @@ function New-Launcher {
   }
 
   if ($null -eq $SetupPath) {
-    Copy-Item "$TemplatesDirectory\setup.json" -Destination "$LauncherDirectory" -ErrorAction SilentlyContinue
+    Copy-Item "$SoftwareDirectory\Templates\setup.json" -Destination "$LauncherDirectory" -ErrorAction SilentlyContinue
     $SetupPath = "$LauncherDirectory\setup.json"
   }
 
@@ -54,14 +54,24 @@ function New-Launcher {
     $ModulesPath = "$LauncherDirectory\modules.json"
   }
 
+  $IconPath = "$SoftwareDirectory\Icons\$LauncherName.ico"
+  if(-not (Test-Path $IconPath)){
+    $IconPath = $null
+  }
+  
   # Get destination file path
   $Params = ""
   $Params += " -ConfigurationPath $ConfigurationPath"
   $Params += " -SetupPath $SetupPath"
   $Params += " -ModulesPath $ModulesPath"
 
+  $ScriptContent = "Import-Module PowerLauncher;"
+  $ScriptContent += "Start-Launcher $Params;"
+
   # Create a new shortcut file
   Write-Verbose "Create new shortcut"
-  Write-Output "Import-Module PowerLauncher;Start-Launcher $Params" > "$LauncherDirectory\$LauncherName.ps1"
-  New-Shortcut -f "$LauncherDirectory\$LauncherName.ps1" -RunAsAdministrator
+  Write-Output $ScriptContent > "$LauncherDirectory\$LauncherName.ps1"
+  New-Shortcut -f "$LauncherDirectory\$LauncherName.ps1" -RunAsAdministrator -Icon $IconPath
+
+  Read-Host "New Launcher created"
 }

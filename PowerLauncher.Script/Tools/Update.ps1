@@ -5,25 +5,25 @@ param (
   $SourceDirectory
 )
 
+Import-Module PowerInstaller
+
 # Get this script directory.
 $ThisScriptDir = $PSScriptRoot
 IF ( $null -eq $ThisScriptDir) {
   $ThisScriptDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
 }
 
-# Get PowerLauncher installed directory.
-# $SoftwareDirectory = $env:PowerLauncher_InstallDir
+# Re-Install Power-Modules
+$PSModulePath = $env:PowerLauncher_ModulesDir
+Install-PowerModules -SourceDirectory $SourceDirectory -PSModulePath $PSModulePath
 
-# Get PowerLauncher installed Modules directory.
-$ModulePath = $env:PowerLauncher_ModulesDir
-
-$ModuleDir = "$SourceDirectory\Modules"
-
-Write-Output "Install PowerLogger"
-Copy-Item "$ModuleDir\PowerLogger" -Destination "$ModulePath" -Recurse -Force
-Write-Output "Install PowerLauncher"
-Copy-Item "$ModuleDir\PowerLauncher" -Destination "$ModulePath" -Recurse -Force
-Write-Output "Install PowerInstaller"
-Copy-Item "$ModuleDir\PowerInstaller" -Destination "$ModulePath" -Recurse -Force
+# # Get PowerLauncher installed directory.
+# $InstallDirectory = $env:PowerLauncher_InstallDir
+# $LaunchersDirectory = "$InstallDirectory\Launchers"
+# if(Test-Path $LaunchersDirectory){
+#   Get-ChildItem $LaunchersDirectory | Foreach-Object{
+#     $LauncherDirectory = $_.FullName
+#   }
+# }
 
 Read-Host -Prompt "Press Enter to exit"

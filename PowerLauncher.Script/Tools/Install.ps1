@@ -29,97 +29,31 @@ param (
   $SourceDirectory = $null
 )
 
-# Get Source Dỉrectory
-IF ($null -eq $SourceDirectory) {
-  $ThisScriptDir = $PSScriptRoot
-  IF ( $null -eq $ThisScriptDir) {
-    $ThisScriptDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
-  }
-  $SourceDirectory = "$ThisScriptDir\.."
-}
-
-# Get Module list
-$PSModules = $("PowerLogger", "PowerLauncher", "PowerInstaller")
-
 # Get Install Directory
-IF ( $null -eq $InstallDirectory) {
+if ( $null -eq $InstallDirectory) {
   $InstallDirectory = Read-Host "Install to"
-  If (-not (Test-Path $InstallDirectory)) {
+  if (-not (Test-Path $InstallDirectory)) {
     throw "Invalid directory. Stop."
   }
 }
 else {
-  Write-Output "Install to: $InstallDirectory"
+  Write-Information "Install to: $InstallDirectory"
 }
 
-# Get Modules directory.
-$ModuleDir = "$SourceDirectory\Modules"
-Write-Output "Modules directory: $ModuleDir"
+# Get script directory
+$ThisScriptDir = Split-Path -Path ($MyInvocation.MyCommand.Path)
 
-# Check Modules
-IF (-not (Test-Path $ModuleDir)) {
-  throw "`$ModuleDir($ModuleDir) is not a folder"
-}
-IF (-not(Test-Path "$ModuleDir\PowerLogger")) {
-  throw "Module PowerLogger is not found."
-}
-IF (-not(Test-Path "$ModuleDir\PowerLauncher")) {
-  throw "Module PowerLauncher is not found."
-}
-IF (-not(Test-Path "$ModuleDir\PowerInstaller")) {
-  throw "Module PowerInstaller is not found."
+# Get Project Source Dỉrectory
+IF ($null -eq $SourceDirectory) {
+  $SourceDirectory = "$ThisScriptDir\.."
 }
 
-# Get directory to install modules.
-$ModulePaths = $env:PSModulePath -split ';'
-IF ( $ModulePaths.Length -lt 1) {
-  throw "`$env:PSModulePath is empty."
+# Import PowerInstaller
+if(-not (Test-Path "$SourceDirectory\Modules\PowerInstaller\PowerInstaller.psm1")){
+  throw "Module PowerInstaller was not found."
 }
+Import-Module "$SourceDirectory\Modules\PowerInstaller"
 
-$ModulePath = $ModulePaths[0]
-IF (-not (Test-Path $ModulePath)) {
-  throw "`$ModulePath($ModulePath) is not a folder"
-}
-
-$Answer = Read-Host "Ready to Install. Continue[Y/N]? (Defaults to Y)"
-IF ($Answer -eq 'N') {
-  return;
-}
-
-Write-Output "Import Module PowerInstaller"
-
-Import-Module "$ModuleDir\PowerInstaller"
-
-IF ($InstallDirectory -ne $SourceDirectory) {
-  Copy-Item "$SourceDirectory\Templates" -Destination "$InstallDirectory" -Recurse -ErrorAction SilentlyContinue
-  Copy-Item "$SourceDirectory\Tools" -Destination "$InstallDirectory" -Recurse -ErrorAction SilentlyContinue
-  Copy-Item "$SourceDirectory\Icons" -Destination "$InstallDirectory" -Recurse -ErrorAction SilentlyContinue
-}
-
-if (-not(Test-Path "$InstallDirectory\configuration.json")) {
-  Write-Output "{}" > "$InstallDirectory\configuration.json"
-}
-
-# Set environment variables
-Write-Output "Set `$env:PowerLauncher_InstallDir=$InstallDirectory"
-[Environment]::SetEnvironmentVariable('PowerLauncher_InstallDir', $InstallDirectory, $Scope)
-Write-Output "Set `$env:PowerLauncher_ModulesDir=$ModulePath"
-[Environment]::SetEnvironmentVariable('PowerLauncher_ModulesDir', $ModulePath, $Scope)
-
-
-# Installl Modules
-Write-Output "Modules are installed to: $ModulePath"
-Write-Output "Install PowerLogger"
-Copy-Item "$ModuleDir\PowerLogger" -Destination "$ModulePath" -Recurse -Force -ErrorAction SilentlyContinue
-Write-Output "Install PowerLauncher"
-Copy-Item "$ModuleDir\PowerLauncher" -Destination "$ModulePath" -Recurse -Force -ErrorAction SilentlyContinue
-Write-Output "Install PowerInstaller"
-Copy-Item "$ModuleDir\PowerInstaller" -Destination "$ModulePath" -Recurse -Force -ErrorAction SilentlyContinue
-
-Write-Output "Create shortcut Update.lnk"
-New-Shortcut -f "$InstallDirectory\Tools\Update.ps1" -d $InstallDirectory -n "Update.lnk" -a -p $SourceDirectory -i "$InstallDirectory\Icons\Download.ico"
-
-Write-Output "Create shortcut New-Launcher.lnk"
-New-CmdShortcut -ShortcutPath "$InstallDirectory\New-Launcher.lnk" -Command "Import-Module PowerInstaller;New-Launcher" -RunAsAdministrator
+Install-PowerLauncher -SourceDirectory $SourceDirectory -InstallDirectory $InstallDirectory -Scope $Scope
 
 Read-Host "Done. Software has been installed successfully"
