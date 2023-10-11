@@ -1,12 +1,12 @@
 <#
 .SYNOPSIS
-Install PowerLauncher
+Start a launcher.
 
 .PARAMETER ConfigurationPath
 Path of the configuration file.
 
 .PARAMETER SetupPath
-Path of the Launcher information file.
+Path of the Launcher setup file.
 
 .PARAMETER ModulesPath
 Path of the Launcher information file.
@@ -24,24 +24,25 @@ function Start-Launcher {
         $ModulesPath
     )
 
-    $InstallFolder = $env:PowerLauncher_InstallDir
-
-    # Load json files
-    if ($null -ne $SetupPath) {
-        $SetupLaunchers = Get-Content $SetupPath | ConvertFrom-Json
-    }
-    
-    if ( $null -ne $ConfigurationPath) {
+    # Load Config
+    if ($null -ne $ConfigurationPath) {
         $Config = Get-Content $ConfigurationPath | ConvertFrom-Json
     }
     else {
         $Config = @{}
     }
+
+    # Load Setup Launchers
+    if ($null -ne $SetupPath) {
+        $SetupLaunchers = Get-Content $SetupPath | ConvertFrom-Json
+    }
     
+    # Load Launchers
     $Launchers = Get-Content $ModulesPath | ConvertFrom-Json
 
     # Add the InstallFolder to the $Config
     if (-not $Config.InstallFolder) {
+        $InstallFolder = $env:PowerLauncher_InstallDir
         $Config | Add-Member -NotePropertyName InstallFolder -NotePropertyValue $InstallFolder
     }
 
