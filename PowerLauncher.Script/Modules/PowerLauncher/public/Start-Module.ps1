@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-Invoke a launcher.
+Start a Power Module.
 
-.PARAMETER Launcher
-Launcher to run.
+.PARAMETER Module
+Module to run.
 
 .PARAMETER Config
 Run configuration.
@@ -13,16 +13,21 @@ Run configuration.
 #>
 function Start-Module {
   param(
+    [Parameter()]
     $Module,
+
+    [Parameter()]
     $Config
   )
+
   if (Confirm-ModuleRun -Module $Module) {
-    Write-ModuleHead -l $Module
+
+    Write-ModuleHead -Module $Module
 
     $ModuleFunction = Get-ModuleFunction -Module $Module
 
     &"$ModuleFunction" $Module $Config
 
-    Write-ModuleTail -l $Module
+    Write-ModuleTail -Module $Module
   }
 }

@@ -1,6 +1,22 @@
+<#
+.SYNOPSIS
+Get executable function of a Power Module
+
+.PARAMETER Module
+Module to run.
+
+.PARAMETER Config
+Run configuration.
+
+.EXAMPLE
+
+#>
 function Get-ModuleFunction {
   param(
+    [Parameter()]
     $Module,
+
+    [Parameter()]
     $Config
   )
 

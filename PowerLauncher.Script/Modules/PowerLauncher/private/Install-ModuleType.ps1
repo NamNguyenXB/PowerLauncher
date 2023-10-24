@@ -11,19 +11,21 @@ Run configuration.
 .EXAMPLE
 
 #>
-function Install-LauncherType {
+function Install-ModuleType {
   param(
     [Alias("t", "type")]
     [Parameter(Mandatory)]
-    $LauncherType,
+    $ModuleType,
+
     [Alias("d", "dir", "directory")]
-    $LauncherDir
+    $ModuleTypesDirectory
   )
 
   # Get FunctionName
-  $FunctionName = "Invoke-" + $LauncherType
+  $FunctionName = "Invoke-" + $ModuleType
+
   if ($null -eq (Get-Command "$FunctionName" -EA SilentlyContinue)) {
-    $Function = @(Get-ChildItem -Path "$LauncherDir" -Filter "$FunctionName".ps1 -Recurse -ErrorAction SilentlyContinue)
+    $Function = @(Get-ChildItem -Path "$ModuleTypesDirectory" -Filter "$FunctionName".ps1 -Recurse -ErrorAction SilentlyContinue)
     try {
       . $Function.FullName
     }
