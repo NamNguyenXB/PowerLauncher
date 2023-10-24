@@ -132,7 +132,7 @@ function Write-Picture {
         # Build color string that will be outputed to the console.
         $color_string = New-Object System.Text.StringBuilder
         $BackgroundColor = [System.Drawing.Color]::FromName($Host.UI.RawUI.BackgroundColor)
-        for ($y = 1; $y -lt $image.Height; $y+=2) {
+        for ($y = 1; $y -lt $image.Height; $y += 2) {
           [void]$color_string.append("`n")
           for ($x = 0; $x -lt $image.Width; $x++) {
             if (($y + 2) -gt $image.Height) {
