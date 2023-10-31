@@ -24,7 +24,7 @@ function Get-ModuleFunction {
   $FunctionName = "Invoke-" + $Type
 
   if ($null -eq (Get-Command "$FunctionName" -EA SilentlyContinue)) {
-    Install-LauncherType -t $Type -d $Config.InstallFolder + "\launchers"
+    Install-LauncherType -t $Type -d $Config.InstallFolder + "\modules"
   }
 
   if ($null -ne (Get-Command "$FunctionName" -EA SilentlyContinue)) {
