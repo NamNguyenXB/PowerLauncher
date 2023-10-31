@@ -18,8 +18,10 @@ function Start-Launcher {
   param (
     [ValidateScript({ ($_ -eq $null) -or (Test-Path $_) })]
     $ConfigurationPath = $null,
+
     [ValidateScript({ ($_ -eq $null) -or (Test-Path $_) })]
     $SetupPath = $null,
+    
     [ValidateScript({ Test-Path $_ })]
     $ModulesPath
   )
@@ -32,13 +34,13 @@ function Start-Launcher {
     $Config = @{}
   }
 
-  # Load Setup Launchers
+  # Load Setup Modules
   if ($null -ne $SetupPath) {
-    $SetupLaunchers = Get-Content $SetupPath | ConvertFrom-Json
+    $SetupModules = Get-Content $SetupPath | ConvertFrom-Json
   }
-    
-  # Load Launchers
-  $Launchers = Get-Content $ModulesPath | ConvertFrom-Json
+
+  # Load Modules
+  $Modules = Get-Content $ModulesPath | ConvertFrom-Json
 
   # Add the InstallFolder to the $Config
   if (-not $Config.InstallFolder) {
@@ -46,14 +48,14 @@ function Start-Launcher {
     $Config | Add-Member -NotePropertyName InstallFolder -NotePropertyValue $InstallFolder
   }
 
-  # Run LauncherHeads
-  Invoke-SetupLaunchers -l $SetupLaunchers -c $Config -Head
+  # Start Setup Heads
+  Start-Modules -Modules $SetupModules -Config $Config -IsSetup -Head
 
-  # Run Launchers
-  Invoke-Launchers -l $Launchers -c $Config
+  # Start Modules
+  Start-Modules -Modules $Modules -Config $Config
 
-  # Run LauncherTails
-  Invoke-SetupLaunchers -l $SetupLaunchers -c $Config
+  # Start Setup Tails
+  Start-Modules -Modules $SetupModules -Config $Config -IsSetup
 
   if (-not $Config.CloseWhenDone) {
     Read-Host -Prompt "Press Enter to exit"
