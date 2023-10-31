@@ -11,22 +11,24 @@ Run configuration.
 .EXAMPLE
 
 #>
-function Start-Module {
+function Start-SetupModule {
   param(
     [Parameter()]
     $Module,
 
     [Parameter()]
-    $Config
+    $Config,
+
+    [Switch]$Tail
   )
 
   if (Confirm-ModuleRun -Module $Module) {
 
-    Write-ModuleHead -Module $Module
-
-    $ModuleFunction = Get-ModuleFunction -Module $Module
-    &"$ModuleFunction" $Module $Config
-
-    Write-ModuleTail -Module $Module
+    if ($Tail.IsPresent) {
+      Start-Module -Module $Module.Tail -Config $Config
+    }
+    else {
+      Start-Module -Module $Module.Head -Config $Config
+    }
   }
 }

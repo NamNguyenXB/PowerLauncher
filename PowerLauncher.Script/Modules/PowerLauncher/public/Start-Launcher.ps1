@@ -27,20 +27,13 @@ function Start-Launcher {
   )
 
   # Load Config
-  if ($null -ne $ConfigurationPath) {
-    $Config = Get-Content $ConfigurationPath | ConvertFrom-Json
-  }
-  else {
-    $Config = @{}
-  }
+  $Config = Get-ObjectFromJsonFile -Path $ConfigurationPath -DefaultValue @{}
 
   # Load Setup Modules
-  if ($null -ne $SetupPath) {
-    $SetupModules = Get-Content $SetupPath | ConvertFrom-Json
-  }
+  $SetupModules = Get-ObjectFromJsonFile -Path $SetupPath -DefaultValue @()
 
   # Load Modules
-  $Modules = Get-Content $ModulesPath | ConvertFrom-Json
+  $Modules = Get-ObjectFromJsonFile -Path $ModulesPath -DefaultValue @()
 
   # Add the InstallFolder to the $Config
   if (-not $Config.InstallFolder) {
@@ -49,13 +42,22 @@ function Start-Launcher {
   }
 
   # Start Setup Heads
-  Start-Modules -Modules $SetupModules -Config $Config -IsSetup -Head
+  $SetupModules | ForEach-Object {
+    $Module = $_
+    Start-SetupModule -Module $Module -Config $Config
+  }
 
   # Start Modules
-  Start-Modules -Modules $Modules -Config $Config
+  $Modules | ForEach-Object {
+    $Module = $_
+    Start-Module -Module $Module -Config $Config
+  }
 
   # Start Setup Tails
-  Start-Modules -Modules $SetupModules -Config $Config -IsSetup
+  $SetupModules | ForEach-Object {
+    $Module = $_
+    Start-SetupModule -Module $Module -Config $Config -Tail
+  }
 
   if (-not $Config.CloseWhenDone) {
     Read-Host -Prompt "Press Enter to exit"

@@ -1,12 +1,25 @@
-function Confirm-ModuleRun{
+function Confirm-ModuleRun {
   param(
-    $Module
+    $Module,
+    [Switch]$IsSetup,
+    [Switch]$Tail
   )
 
-  $CanRun = $false
-  if(($null -ne $Module) -and ($Module.Run)){
-    $CanRun = $true
+  if (($null -eq $Module) -or ($true -ne $Module.Run)) {
+    return $false;
   }
 
-  return $CanRun
+  if (-not $IsSetup.IsPresent) {
+    return $true;
+  }
+
+  if ($Tail.IsPresent -and ($null -ne $Module.Tail) -and ($true -eq $Module.Tail.Run)) {
+    return $true;
+  }
+
+  if ((-not $Tail.IsPresent) -and ($null -ne $Module.Head) -and ($true -eq $Module.Head.Run)) {
+    return $true;
+  }
+
+  return $false
 }
