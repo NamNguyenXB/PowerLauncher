@@ -27,7 +27,7 @@ function Get-ModuleFunction {
     Install-LauncherType -t $Type -d $Config.InstallFolder + "\modules"
   }
 
-  if ($null -ne (Get-Command "$FunctionName" -EA SilentlyContinue)) {
+  if ($null -eq (Get-Command "$FunctionName" -EA SilentlyContinue)) {
     throw "Cannot get module function of the type $Type"
   }
 

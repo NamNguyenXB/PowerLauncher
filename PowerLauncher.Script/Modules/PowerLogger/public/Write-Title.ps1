@@ -3,7 +3,7 @@ function Write-Title{
     [String]$Content
   )
 
-  $LineLength = ($Content.Length + 4)
+  [Int16]$LineLength = ($Content.Length + 4)
 
   Write-Line -Size $LineLength -Content " " -Color Blue
 

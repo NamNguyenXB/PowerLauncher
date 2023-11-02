@@ -12,11 +12,21 @@ function Write-ModuleTail {
   param (
     [Alias("l")]
     [Parameter(HelpMessage = "Launcher to display.")]
-    $Launcher
+    $Module
   )
-  Write-Content " " -ForegroundColor White -BackgroundColor Blue
-  Write-Content " " -ForegroundColor White -BackgroundColor Blue -NoNewline
-  Write-Content ">" -Level 1 -ForegroundColor White -BackgroundColor Blue -NoNewline
-  Write-Content " Done  " -ForegroundColor Black -BackgroundColor Green
-  Write-Content ""
+
+  # If no log level, use the default level: 0.
+  if ($null -eq $LogLevel) {
+    $global:LogLevel = 0;
+  }
+
+  # Save the log level.
+  $OriginalLevel = $LogLevel;
+
+  $global:LogLevel = $Loglevel + 1
+  Write-Content ">" -ForegroundColor White -BackgroundColor Red -NoNewline
+  Write-Content "  End  " -ForegroundColor Black -BackgroundColor Red
+
+  # Restore the log level.
+  $global:LogLevel = $OriginalLevel
 }

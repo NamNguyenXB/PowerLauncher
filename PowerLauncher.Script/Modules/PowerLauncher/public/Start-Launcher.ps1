@@ -26,6 +26,11 @@ function Start-Launcher {
     $ModulesPath
   )
 
+  # Initialize Log Level
+  if($null -eq $LogLevel){
+    $global:LogLevel = 0
+  }
+
   # Load Config
   $Config = Get-ObjectFromJsonFile -Path $ConfigurationPath -DefaultValue @{}
 

@@ -15,28 +15,27 @@ function Write-ModuleHead {
     $Module
   )
 
-  if(Confirm-ModuleRun -Module $Module){
+  if (Confirm-ModuleRun -Module $Module) {
 
-    # Print title
-    Write-Title $($Module.Name)
-
-    Write-Content " " -ForegroundColor White -BackgroundColor Blue
-    Write-Content ">" -Level 1 -ForegroundColor White -BackgroundColor Blue -NoNewline
-    Write-Content " Run Details " -ForegroundColor Black -BackgroundColor Gray
-    $Module.PSObject.Properties | ForEach-Object {
-      if ((($_.Name) -ne "Name") -and (($_.Name) -ne "Run")) {
-        if(($null -ne ${_}.Value) -and ("" -ne ${_}.Value)){
-          Write-Content " " -ForegroundColor White -BackgroundColor Blue -NoNewline
-          Write-Content "" -Level 2 -NoNewline
-          Write-Content "- $(${_}.Name): " -NoNewline
-          Write-Content "$(${_}.Value)" -ForegroundColor Yellow
-        }
-      }
+    # If no log level, use the default level: 0.
+    if ($null -eq $LogLevel) {
+      $global:LogLevel = 0;
     }
-    Write-Content " " -ForegroundColor White -BackgroundColor Blue -NoNewline
-    Write-Content ""
-    Write-Content " " -ForegroundColor White -BackgroundColor Blue -NoNewline
-    Write-Content ">" -Level 1 -ForegroundColor White -BackgroundColor Blue -NoNewline
-    Write-Content " Start " -ForegroundColor Black -BackgroundColor Green
+
+    # Save the log level.
+    $OriginalLevel = $LogLevel;
+  
+    # Print title
+    Write-ModuleTitle -Module $Module
+
+    # Write Module Details.
+    Write-ModuleDetail -Module $Module
+
+    $global:LogLevel = $LogLevel + 1
+    Write-Content ">" -Level 1 -ForegroundColor White -BackgroundColor Green -NoNewline
+    Write-Content " Begin " -ForegroundColor Black -BackgroundColor Green
+
+    # Restore the log level.
+    $global:LogLevel = $OriginalLevel
   }
 }

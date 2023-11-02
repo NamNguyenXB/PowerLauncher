@@ -24,12 +24,12 @@ o--o
 #>
 function Write-Box {
   param(
-    [Alias("c")]
     [Parameter(HelpMessage = "Content to display.")]
     [String] $Content,
-    [Alias("t")]
+
     [Parameter(HelpMessage = "Content Tag")]
     [String] $Tag,
+    
     $ForegroundColor = $null,
     $BackgroundColor = $null,
     $TagForegroundColor = $null,

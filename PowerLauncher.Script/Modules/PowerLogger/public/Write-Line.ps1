@@ -17,11 +17,15 @@ function Write-Line {
   param(
     [Parameter(HelpMessage = "Length of the line. Default to 120.")]
     [int16] $Size = 120,
+
     [Parameter(HelpMessage = "Content to draw the line. Default to '-'.")]
     $Content = "-",
+
     $Color,
+
     [Switch]$NoNewline
   )
+
   if (($null -eq $Content) -or ($Content.Length -lt 1)) {
     $Content = "-"
   }
@@ -30,11 +34,12 @@ function Write-Line {
     $Content = $Content[0]
   }
 
-  $Line = $Content * $LineLength
+  $Line = $Content * $Size
+  
   if ($NoNewline.IsPresent) {
-    Write-Content $Line -BackgroundColor $Color -NoNewline
+    Write-Content -Content $Line -BackgroundColor $Color -NoNewline
   }
   else {
-    Write-Content $Line -BackgroundColor $Color
+    Write-Content -Content $Line -BackgroundColor $Color
   }
 }
