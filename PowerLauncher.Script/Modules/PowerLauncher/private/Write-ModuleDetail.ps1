@@ -40,10 +40,6 @@ function Write-ModuleDetail {
         ) -and (
           "" -ne ${_}.Value
         )) {
-      # Write-Content ">" -NoNewline
-      # Write-Content " $(${_}.Name): " -NoNewline
-      # Write-Content "$(${_}.Value)" -ForegroundColor Yellow
-
       $Prefix_1 = "> "
       $Content_1 = ${_}.Name
       $Postfix_1 = ""
