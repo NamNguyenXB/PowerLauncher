@@ -11,18 +11,58 @@ function Write-ModuleDetail {
   # Save the log level.
   $OriginalLevel = $LogLevel;
 
-  # Write '> Run Details'
   $global:LogLevel = $LogLevel + 1
-  Write-Content ">" -ForegroundColor Black -BackgroundColor Gray -NoNewline
-  Write-Content " Run Details " -ForegroundColor Black -BackgroundColor Gray
+
+  # Write Header
+  $Prefix = "> "
+  $Content = "Run Details"
+  $Postfix = " "
+  $BackgroundColor = 'Black'
+  $ForegroundColor = 'White'
+  Write-Content $Prefix -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
+  $BackgroundColor = 'Black'
+  $ForegroundColor = 'White'
+  Write-Content $Content -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
+  Write-Content $Postfix -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
+  Write-Content "" -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor
 
   # Write Module parameters with the display pattern: '> Name: Value'
   $global:LogLevel = $LogLevel + 1
   $Module.PSObject.Properties | ForEach-Object {
-    if (($_.Name -ne "ID") -and ($_.Name -ne "Name") -and ($_.Name -ne "Run") -and ($null -ne ${_}.Value) -and ("" -ne ${_}.Value)) {
-      Write-Content ">" -NoNewline
-      Write-Content " $(${_}.Name): " -NoNewline
-      Write-Content "$(${_}.Value)" -ForegroundColor Yellow
+    if ((
+          $_.Name -ne "ID"
+        ) -and (
+          $_.Name -ne "Name"
+        ) -and (
+          $_.Name -ne "Run"
+        ) -and (
+          $null -ne ${_}.Value
+        ) -and (
+          "" -ne ${_}.Value
+        )) {
+      # Write-Content ">" -NoNewline
+      # Write-Content " $(${_}.Name): " -NoNewline
+      # Write-Content "$(${_}.Value)" -ForegroundColor Yellow
+
+      $Prefix_1 = "o "
+      $Content_1 = ${_}.Name
+      $Postfix_1 = ""
+      $Delimiter = ": "
+      $Prefix_2 = ""
+      $Content_2 = ${_}.Value
+      $Postfix_2 = ""
+      $BackgroundColor = 'Black'
+      $ForegroundColor = 'White'
+      Write-Content $Prefix_1 -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
+      Write-Content $Content_1 -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
+      Write-Content $Postfix_1 -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
+      Write-Content $Delimiter -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
+      $BackgroundColor = 'Black'
+      $ForegroundColor = 'Yellow'
+      Write-Content $Prefix_2 -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
+      Write-Content $Content_2 -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
+      Write-Content $Postfix_2 -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
+      Write-Content "" -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor
     }
   }
 
