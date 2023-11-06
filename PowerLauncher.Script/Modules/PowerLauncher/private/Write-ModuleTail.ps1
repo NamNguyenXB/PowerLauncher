@@ -24,8 +24,22 @@ function Write-ModuleTail {
   $OriginalLevel = $LogLevel;
 
   $global:LogLevel = $Loglevel + 1
+
+  # Write '>'
+  $BackgroundColor = 'Red'
+  $ForegroundColor = 'White'
   Write-Content ">" -ForegroundColor White -BackgroundColor Red -NoNewline
-  Write-Content "  End  " -ForegroundColor Black -BackgroundColor Red
+
+  # Write '  End  '
+  $Prefix = "  "
+  $Content = "End"
+  $Postfix = "  "
+  $BackgroundColor = 'Red'
+  $ForegroundColor = 'Black'
+  Write-Content $Prefix -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
+  Write-Content $Content -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
+  Write-Content $Postfix -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
+  Write-Content "" -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor
 
   # Restore the log level.
   $global:LogLevel = $OriginalLevel

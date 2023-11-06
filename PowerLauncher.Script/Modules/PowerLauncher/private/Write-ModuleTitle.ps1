@@ -41,7 +41,7 @@ function Write-ModuleTitle{
   $BackgroundColor = 'Yellow'
   $ForegroundColor = 'Black'
   Write-Content -Content "$Prefix_1" -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
-  Write-Content -Content "$ModuleID " -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
+  Write-Content -Content "$ModuleID" -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
   Write-Content -Content "$Postfix_1" -BackgroundColor $BackgroundColor -ForegroundColor $ForegroundColor -NoNewline
 
   # Delimiter
