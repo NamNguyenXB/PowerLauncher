@@ -26,45 +26,50 @@ function Start-Launcher {
     $ModulesPath
   )
 
-  # Initialize Log Level
-  if($null -eq $LogLevel){
-    $global:LogLevel = 0
+  try {
+    # Initialize Log Level
+    if ($null -eq $LogLevel) {
+      $global:LogLevel = 0
+    }
+
+    # Load Config
+    $Config = Get-ObjectFromJsonFile -Path $ConfigurationPath -DefaultValue @{}
+
+    # Load Setup Modules
+    $SetupModules = Get-ObjectFromJsonFile -Path $SetupPath -DefaultValue @()
+
+    # Load Modules
+    $Modules = Get-ObjectFromJsonFile -Path $ModulesPath -DefaultValue @()
+
+    # Add the InstallFolder to the $Config
+    if (-not $Config.InstallFolder) {
+      $InstallFolder = $env:PowerLauncher_InstallDir
+      $Config | Add-Member -NotePropertyName InstallFolder -NotePropertyValue $InstallFolder
+    }
+
+    # Start Setup Heads
+    $SetupModules | ForEach-Object {
+      $Module = $_
+      Start-SetupModule -Module $Module -Config $Config
+    }
+
+    # Start Modules
+    $Modules | ForEach-Object {
+      $Module = $_
+      Start-Module -Module $Module -Config $Config
+    }
+
+    # Start Setup Tails
+    $SetupModules | ForEach-Object {
+      $Module = $_
+      Start-SetupModule -Module $Module -Config $Config -Tail
+    }
+
+    if (-not $Config.CloseWhenDone) {
+      Read-Host -Prompt "Press Enter to exit"
+    }
   }
-
-  # Load Config
-  $Config = Get-ObjectFromJsonFile -Path $ConfigurationPath -DefaultValue @{}
-
-  # Load Setup Modules
-  $SetupModules = Get-ObjectFromJsonFile -Path $SetupPath -DefaultValue @()
-
-  # Load Modules
-  $Modules = Get-ObjectFromJsonFile -Path $ModulesPath -DefaultValue @()
-
-  # Add the InstallFolder to the $Config
-  if (-not $Config.InstallFolder) {
-    $InstallFolder = $env:PowerLauncher_InstallDir
-    $Config | Add-Member -NotePropertyName InstallFolder -NotePropertyValue $InstallFolder
-  }
-
-  # Start Setup Heads
-  $SetupModules | ForEach-Object {
-    $Module = $_
-    Start-SetupModule -Module $Module -Config $Config
-  }
-
-  # Start Modules
-  $Modules | ForEach-Object {
-    $Module = $_
-    Start-Module -Module $Module -Config $Config
-  }
-
-  # Start Setup Tails
-  $SetupModules | ForEach-Object {
-    $Module = $_
-    Start-SetupModule -Module $Module -Config $Config -Tail
-  }
-
-  if (-not $Config.CloseWhenDone) {
-    Read-Host -Prompt "Press Enter to exit"
+  catch {
+    Write-LauncherError -LauncherError $_
   }
 }

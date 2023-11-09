@@ -20,13 +20,18 @@ function Start-Module {
     $Config
   )
 
-  if (Confirm-ModuleRun -Module $Module) {
+  try {
+    if (Confirm-ModuleRun -Module $Module) {
 
-    Write-ModuleHead -Module $Module
-
-    $ModuleFunction = Get-ModuleFunction -Module $Module
-    &"$ModuleFunction" $Module $Config
-
-    Write-ModuleTail -Module $Module
+      Write-ModuleHead -Module $Module
+  
+      $ModuleFunction = Get-ModuleFunction -Module $Module
+      &"$ModuleFunction" $Module $Config
+  
+      Write-ModuleTail -Module $Module
+    }
+  }
+  catch {
+    Write-ModuleError -Module $Module -Config $Config -ModuleError $_
   }
 }
