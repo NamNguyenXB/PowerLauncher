@@ -37,6 +37,5 @@
     $CmdArgumentsToRunMsBuild = "$CmdOption "" ""$MSBuildPath"" ""$ProjectFilePath"" $MsBuildParameters"
 
     Start-Process cmd.exe -ArgumentList $CmdArgumentsToRunMsBuild -WindowStyle "Maximized" -PassThru
-    $ProcessId = $Process.Id
   }
 }
