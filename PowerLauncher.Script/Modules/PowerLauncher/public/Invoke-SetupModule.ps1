@@ -11,7 +11,7 @@ Run configuration.
 .EXAMPLE
 
 #>
-function Start-SetupModule {
+function Invoke-SetupModule {
   param(
     [Parameter()]
     $Module,
@@ -24,11 +24,13 @@ function Start-SetupModule {
 
   if (Confirm-ModuleRun -Module $Module) {
 
-    if ($Tail.IsPresent) {
-      Start-Module -Module $Module.Tail -Config $Config
+    if (-not $Tail.IsPresent) {
+      $Module = $Module.Head
     }
     else {
-      Start-Module -Module $Module.Head -Config $Config
+      $Module = $Module.Tail
     }
+
+    Invoke-Module -Module $Module -Config $Config
   }
 }

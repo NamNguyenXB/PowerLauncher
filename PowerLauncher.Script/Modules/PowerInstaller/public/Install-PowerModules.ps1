@@ -1,4 +1,4 @@
-function Install-PowerModules{
+function Install-PowerModules {
   param(
     $SourceDirectory,
     $PSModulePath
@@ -7,9 +7,13 @@ function Install-PowerModules{
   Test-PowerModules -SourceDirectory $SourceDirectory
 
   $ModuleList = Get-PowerModuleList
-  
 
-  $ModuleList | ForEach-Object{
-    Copy-Item "$SourceDirectory\Modules\$_" -Destination "$PSModulePath" -Recurse -Force -ErrorAction SilentlyContinue
+  $ModuleList | ForEach-Object {
+    $Path = "$SourceDirectory\Modules\$_"
+    $Destination = "$PSModulePath\$_"
+    if (Test-Path $Destination) {
+      Remove-Item "$Destination\*" -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    Copy-Item -Path $Path -Destination "$PSModulePath" -Recurse -Force -ErrorAction SilentlyContinue
   }
 }

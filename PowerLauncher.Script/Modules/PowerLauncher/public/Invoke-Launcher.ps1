@@ -14,7 +14,7 @@ Path of the Launcher information file.
 .EXAMPLE
 
 #>
-function Start-Launcher {
+function Invoke-Launcher {
   param (
     [ValidateScript({ ($_ -eq $null) -or (Test-Path $_) })]
     $ConfigurationPath = $null,
@@ -50,19 +50,19 @@ function Start-Launcher {
     # Start Setup Heads
     $SetupModules | ForEach-Object {
       $Module = $_
-      Start-SetupModule -Module $Module -Config $Config
+      Invoke-SetupModule -Module $Module -Config $Config
     }
 
     # Start Modules
     $Modules | ForEach-Object {
       $Module = $_
-      Start-Module -Module $Module -Config $Config
+      Invoke-Module -Module $Module -Config $Config
     }
 
     # Start Setup Tails
     $SetupModules | ForEach-Object {
       $Module = $_
-      Start-SetupModule -Module $Module -Config $Config -Tail
+      Invoke-SetupModule -Module $Module -Config $Config -Tail
     }
 
     if (-not $Config.CloseWhenDone) {

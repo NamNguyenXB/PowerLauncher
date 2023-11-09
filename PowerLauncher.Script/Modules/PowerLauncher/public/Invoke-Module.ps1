@@ -11,7 +11,7 @@ Run configuration.
 .EXAMPLE
 
 #>
-function Start-Module {
+function Invoke-Module {
   param(
     [Parameter()]
     $Module,
@@ -21,13 +21,15 @@ function Start-Module {
   )
 
   try {
+    # Validate Module before running
     if (Confirm-ModuleRun -Module $Module) {
-
+      # Write Module Head
       Write-ModuleHead -Module $Module
-  
-      $ModuleFunction = Get-ModuleFunction -Module $Module
-      &"$ModuleFunction" $Module $Config
-  
+
+      # Run Module
+      Invoke-ModuleFunction -Module $Module -Config $Config
+
+      # Write Module Tail.
       Write-ModuleTail -Module $Module
     }
   }
