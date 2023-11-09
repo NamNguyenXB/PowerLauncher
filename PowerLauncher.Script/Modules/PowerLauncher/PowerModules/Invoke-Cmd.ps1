@@ -1,12 +1,7 @@
 ﻿if ($null -eq (Get-Command Invoke-Cmd -EA SilentlyContinue)) {
   function Invoke-Cmd {
-    param($Launcher, $Config)
+    param($Module, $Config)
 
-    if ($Launcher.Run) {
-      $Cmd = $Launcher.Cmd
-      $Arguments = $Launcher.Arguments
-      $Command = "$Cmd $Arguments"
-      Invoke-Expression $Command
-    }
+    Invoke-Expression "$($Module.Cmd) $($Module.Arguments)"
   }
 }

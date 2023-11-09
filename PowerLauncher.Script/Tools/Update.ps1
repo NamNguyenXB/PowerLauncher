@@ -15,15 +15,6 @@ IF ( $null -eq $ThisScriptDir) {
 
 # Re-Install Power-Modules
 $PSModulePath = $env:PowerLauncher_ModulesDir
-Install-PowerModules -SourceDirectory $SourceDirectory -PSModulePath $PSModulePath
-
-# # Get PowerLauncher installed directory.
-# $InstallDirectory = $env:PowerLauncher_InstallDir
-# $LaunchersDirectory = "$InstallDirectory\Launchers"
-# if(Test-Path $LaunchersDirectory){
-#   Get-ChildItem $LaunchersDirectory | Foreach-Object{
-#     $LauncherDirectory = $_.FullName
-#   }
-# }
+Install-PSModules -SourceDirectory $SourceDirectory -PSModulePath $PSModulePath
 
 Read-Host -Prompt "Press Enter to exit"
