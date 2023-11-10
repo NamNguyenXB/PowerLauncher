@@ -15,15 +15,18 @@
     $ProjectFilePath = Get-ProjectFilePath -Config $Config -ProjectID $ProjectID
 
     # Get Log File paths.
-    $BuildInfoFilePath = "$InstallFolder\Logs\$($ProjectID)_info.log"
-    $BuildErrorFilePath = "$InstallFolder\Logs\$($ProjectID)_error.log"
+    $BuildInfoFilePath = "$InstallFolder\Logs\MSBuild_$($ProjectID)_info.log"
+    $BuildErrorFilePath = "$InstallFolder\Logs\MSBuild_$($ProjectID)_error.log"
 
+    # Build parameters
     $MsBuildParameters = "/p:Configuration=$Configuration"
     $MsBuildParameters += " /fileLoggerParameters:LogFile=""$BuildInfoFilePath""$verbosityLevel"
     $MsBuildParameters += " /fileLoggerParameters1:LogFile=""$BuildErrorFilePath"";errorsonly"
 
     $CmdArgumentsToRunMsBuild = "$CmdOption "" ""$MSBuildPath"" ""$ProjectFilePath"" $MsBuildParameters"
 
-    Start-Process cmd.exe -ArgumentList $CmdArgumentsToRunMsBuild -WindowStyle "Maximized" -PassThru
+    #Start-Process cmd.exe -ArgumentList $CmdArgumentsToRunMsBuild -WindowStyle "Maximized" -PassThru
+
+    Invoke-Expression "$MsBuildPath $ProjectFilePath $MsBuildParameters"
   }
 }

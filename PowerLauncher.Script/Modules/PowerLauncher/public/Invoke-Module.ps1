@@ -27,7 +27,12 @@ function Invoke-Module {
       Write-ModuleHead -Module $Module
 
       # Run Module
-      Invoke-ModuleFunction -Module $Module -Config $Config
+      try {
+        Invoke-ModuleFunction -Module $Module -Config $Config
+      }
+      catch {
+        Write-ModuleError -Module $Module -Config $Config -ModuleError $_
+      }
 
       # Write Module Tail.
       Write-ModuleTail -Module $Module

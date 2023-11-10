@@ -47,23 +47,51 @@ function Invoke-Launcher {
       $Config | Add-Member -NotePropertyName InstallFolder -NotePropertyValue $InstallFolder
     }
 
+    $SkipErrors = $Config.SkipErrors
+    $global:ModuleErrors = @{}
+    $RunValid = $true
+
+    if ($true -ne $SkipErrors) {
+      $SkipErrors = $false;
+    }
+
     # Start Setup Heads
-    $SetupModules | ForEach-Object {
-      $Module = $_
-      Invoke-SetupModule -Module $Module -Config $Config
+    if ($RunValid) {
+      foreach ($Module in $SetupModules) {
+        Invoke-SetupModule -Module $Module -Config $Config
+  
+        if ((-not $SkipErrors) -and ($ModuleErrors.Count -gt 0)) {
+          $RunValid = $false;
+          break
+        }
+      }
     }
 
     # Start Modules
-    $Modules | ForEach-Object {
-      $Module = $_
-      Invoke-Module -Module $Module -Config $Config
+    if ($RunValid) {
+      foreach ($Module in $Modules) {
+        Invoke-Module -Module $Module -Config $Config
+
+        if ((-not $SkipErrors) -and ($ModuleErrors.Count -gt 0)) {
+          $RunValid = $false;
+          break
+        }
+      }
     }
 
     # Start Setup Tails
-    $SetupModules | ForEach-Object {
-      $Module = $_
-      Invoke-SetupModule -Module $Module -Config $Config -Tail
+    if ($RunValid) {
+      foreach ($Module in $SetupModules) {
+        Invoke-SetupModule -Module $Module -Config $Config -Tail
+
+        if ((-not $SkipErrors) -and ($ModuleErrors.Count -gt 0)) {
+          $RunValid = $false;
+          break
+        }
+      }
     }
+
+    Write-ModuleErrors -ModuleErrors $ModuleErrors
 
     if (-not $Config.CloseWhenDone) {
       Read-Host -Prompt "Press Enter to exit"

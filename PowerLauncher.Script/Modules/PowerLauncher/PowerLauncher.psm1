@@ -14,6 +14,7 @@ foreach ($Function in $AllFunctions) {
     . $Function.FullName
   }
   catch {
+    Write-Error $_
     throw ('Unable to dot source {0}' -f $Function.FullName)
   }
 }

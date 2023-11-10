@@ -22,15 +22,20 @@ function Invoke-SetupModule {
     [Switch]$Tail
   )
 
-  if (Confirm-ModuleRun -Module $Module) {
+  try {
+    if (Confirm-ModuleRun -Module $Module) {
 
-    if (-not $Tail.IsPresent) {
-      $Module = $Module.Head
+      if ($Tail.IsPresent) {
+        $Module = $Module.Tail;
+      }
+      else {
+        $Module = $Module.Head;
+      }
+  
+      Invoke-Module -Module $Module -Config $Config
     }
-    else {
-      $Module = $Module.Tail
-    }
-
-    Invoke-Module -Module $Module -Config $Config
+  }
+  catch {
+    Write-ModuleError -Module $Module -Config $Config -ModuleError $_
   }
 }
