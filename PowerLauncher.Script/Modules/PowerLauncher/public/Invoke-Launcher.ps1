@@ -1,6 +1,9 @@
 <#
 .SYNOPSIS
-Start a launcher.
+Run a launcher.
+
+.DESCRIPTION
+Run a launcher which contains many modules.
 
 .PARAMETER ConfigurationPath
 Path of the configuration file.

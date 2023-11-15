@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET7_0;NETCOREAPP
 R:\PowerLauncher\PowerLauncher.View\App.xaml
-11407045341
+3-1335740965
 
-5-2130532639
-198947991364
-MainWindow.xaml;
+72114117679
+198-759771931
+Config.xaml;MainWindow.xaml;ModuleList.xaml;
 
-False
+True
 

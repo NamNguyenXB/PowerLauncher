@@ -7,7 +7,21 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Config.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="ModuleList.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Config.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ModuleList.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
