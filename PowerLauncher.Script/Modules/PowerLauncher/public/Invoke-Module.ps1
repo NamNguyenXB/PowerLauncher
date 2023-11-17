@@ -23,7 +23,10 @@ function Invoke-Module {
 
     [Parameter()]
     [ValidateNotNull()]
-    $Config = @{}
+    $Config = @{},
+
+    [Parameter()]
+    $Logger
   )
 
   begin {}
