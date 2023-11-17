@@ -4,6 +4,10 @@ $ScriptPath = Split-Path $MyInvocation.MyCommand.Path
 # Get Scripts in public folder
 $PublicFunctions = @(Get-ChildItem -Path "$ScriptPath\public" -Filter *.ps1 -Recurse -ErrorAction SilentlyContinue)
 
+$Enums = @(Get-ChildItem -Path "$ScriptPath\enum" -Filter *.ps1 -Recurse -ErrorAction SilentlyContinue)
+
+$PublicFunctions += $Enums
+
 # Get Scripts in private folder
 $PrivateFunctions = @(Get-ChildItem -Path "$ScriptPath\private" -Filter *.ps1 -Recurse -ErrorAction SilentlyContinue)
 

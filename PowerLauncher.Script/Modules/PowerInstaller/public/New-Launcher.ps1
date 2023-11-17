@@ -66,7 +66,7 @@ function New-Launcher {
   $Params += " -ModulesPath $ModulesPath"
 
   $ScriptContent = "Import-Module PowerLauncher;"
-  $ScriptContent += "Start-Launcher $Params;"
+  $ScriptContent += "Invoke-Launcher $Params;"
 
   # Create a new shortcut file
   Write-Verbose "Create new shortcut"
